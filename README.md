@@ -1,6 +1,232 @@
-# 智能教室管理系统
+# Smart Classroom Management System
+
+A modern and feature-rich classroom management system, providing student score management, homework management, hygiene management, random number generation, and more.
+
+---
+
+## [中文说明](#chinese)
+
+---
+
+## Features
+
+- Score Management: Student score statistics, leaderboard, score addition/deduction operations
+- Homework Management: Homework assignment, submission status tracking
+- Hygiene Management: Duty schedule, cleaning status management
+- Random Number: Classroom random questioning function
+- Rule Management: Custom classroom rules
+- Data Dashboard: Real-time data visualization display
+- System Monitoring: Server status monitoring
+- Data Backup: Automatic backup and recovery
+
+## Tech Stack
+
+- Backend: Node.js + Express + HTTP/2
+- Frontend: Native JavaScript + CSS3
+- UI Framework: LuminaUI
+- Data Storage: LocalStorage + JSON files
+- Build Tool: Webpack
+
+## Directory Structure
+
+```
+smart-classroom5.1/
+├── public/                 # Frontend resources
+│   ├── css/               # Style files
+│   ├── js/                # JavaScript files
+│   ├── assets/            # Static assets
+│   ├── LuminaUI/          # UI component library
+│   └── *.html             # Page files
+├── src/                   # Backend source code
+│   ├── server-http2.js    # HTTP/2 server
+│   └── generate-ssl.js    # SSL certificate generation
+├── data/                  # Data storage
+│   └── backups/           # Data backups
+├── ssl/                   # SSL certificates
+├── docs/                  # Documentation
+├── scripts/               # Scripts
+├── package.json           # Project configuration
+├── LICENSE                # Open source license
+└── README.md              # Project description
+```
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 14+
+- npm or yarn
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd smart-classroom5.1
+
+# Install dependencies
+npm install
+```
+
+### Running
+
+```bash
+# Development mode
+npm start
+
+# HTTP/2 mode
+npm run start:http2
+
+# HTTPS mode (generate certificate first)
+npm run generate-ssl
+npm run start:http2-ssl
+```
+
+### Access
+
+Open your browser and visit: `http://localhost:3000`
+
+## Feature Modules
+
+### Login Authentication
+
+- User login/logout
+- Session management
+- Permission control
+
+### Dashboard
+
+- Feature navigation
+- Quick access
+- System overview
+
+### Score Management
+
+- Student score query
+- Score leaderboard
+- Score addition/deduction operations
+- Operation record viewing
+
+### Homework Management
+
+- Homework publication
+- Submission status tracking
+- History record query
+
+### Hygiene Management
+
+- Duty schedule
+- Cleaning status marking
+- History records
+
+### Random Number
+
+- Random student selection
+- Selection range settings
+- History records
+
+### Data Dashboard
+
+- Real-time data display
+- Statistical charts
+- Key indicator monitoring
+
+## Configuration
+
+### Port Configuration
+
+Default port: 3000, can be modified in `src/server-http2.js`
+
+### SSL Configuration
+
+```bash
+# Generate SSL certificate
+npm run generate-ssl
+```
+
+### Environment Variables
+
+- `USE_SSL=true`: Enable HTTPS
+
+## Development Guide
+
+### Project Structure Explanation
+
+- `public/`: All frontend resources
+- `src/`: Backend service code
+- `data/`: Data file storage
+
+### Adding New Features
+
+1. Create the corresponding HTML page in `public/`
+2. Add business logic in `public/js/`
+3. Add styles in `public/css/`
+4. Add API in `src/` if backend support is needed
+
+### Code Standards
+
+- Use ES6+ syntax
+- Follow modular development
+- Keep code clear and concise
+
+## Deployment
+
+### Production Environment Deployment
+
+```bash
+# Build the project
+npm run build
+
+# Start the service
+npm start
+```
+
+### Using PM2 for Process Management
+
+```bash
+npm install -g pm2
+pm2 start src/server-http2.js --name smart-classroom
+```
+
+## Contributing
+
+Welcome to contribute! Please follow these steps:
+
+1. Fork this repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+## Contact
+
+- Project Homepage: [GitHub Repository]
+- Issue Tracker: [Issues]
+- Email: [your-email@example.com]
+
+## Acknowledgments
+
+Thanks to all developers who have contributed to this project!
+
+---
+
+**Note**: When using the system for the first time, please register an administrator account and initialize system data.
+
+---
+
+# <a name="chinese"></a>智能教室管理系统
 
 一个现代化的、功能丰富的班级管理系统，提供学生积分管理、作业管理、卫生管理、随机抽号等功能。
+
+---
+
+## [English](#smart-classroom-management-system)
+
+---
 
 ## 特性
 

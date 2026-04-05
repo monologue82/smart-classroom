@@ -1,0 +1,376 @@
+<!-- 通用导航栏组件 -->
+<nav class="main-navbar" id="mainNavbar">
+    <div class="nav-container">
+        <div class="nav-brand">
+            <i class="fas fa-graduation-cap"></i>
+            <span>智能教室管理系统</span>
+        </div>
+        
+        <div class="nav-menu" id="navMenu">
+            <a href="main.html" class="nav-link" data-transition="particles"><i class="fas fa-home"></i> 控制台</a>
+            <a href="score.html" class="nav-link" data-transition="wave"><i class="fas fa-coins"></i> 积分管理</a>
+            <a href="rules.html" class="nav-link" data-transition="cubes"><i class="fas fa-book"></i> 规则管理</a>
+            <a href="random.html" class="nav-link" data-transition="rings"><i class="fas fa-random"></i> 随机抽号</a>
+            <a href="homework.html" class="nav-link" data-transition="slide-in-left"><i class="fas fa-book-open"></i> 作业管理</a>
+            <a href="clean.html" class="nav-link" data-transition="slide-in-right"><i class="fas fa-broom"></i> 卫生管理</a>
+            <a href="settings.html" class="nav-link" data-transition="rotate"><i class="fas fa-cog"></i> 系统设置</a>
+            <a href="monitor.html" class="nav-link" data-transition="flip"><i class="fas fa-server"></i> 系统监控</a>
+            <a href="dashboard.html" class="nav-link" data-transition="bounce"><i class="fas fa-chart-line"></i> 数据大屏</a>
+            <a href="lab.html" class="nav-link" data-transition="scale-in"><i class="fas fa-flask"></i> 实验室</a>
+        </div>
+        
+        <div class="nav-user">
+            <div class="user-avatar">A</div>
+            <span class="user-name">管理员</span>
+            <button class="logout-btn" title="退出登录"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+        
+        <div class="nav-toggle" id="navToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</nav>
+
+<style>
+/* 导航栏样式 */
+.main-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--backdrop-filter);
+    border-bottom: 1px solid var(--glass-border);
+    z-index: 1000;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: var(--shadow);
+}
+
+.main-navbar.scrolled {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: var(--shadow);
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 30px;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    background: linear-gradient(45deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 18px;
+    text-shadow: 0 2px 10px rgba(138, 43, 226, 0.2);
+}
+
+.nav-brand i {
+    font-size: 24px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: pulse 2s infinite;
+}
+
+.nav-menu {
+    display: flex;
+    gap: 25px;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--light);
+    padding: 12px 20px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    transition: var(--transition);
+    border-radius: 2px;
+}
+
+.nav-link:hover::before {
+    left: 100%;
+}
+
+.nav-link:hover {
+    color: var(--primary);
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(138, 43, 226, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.2);
+}
+
+.nav-link.active {
+    color: var(--primary);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(138, 43, 226, 0.2);
+    font-weight: 600;
+    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.2);
+}
+
+.nav-link.active::after {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+}
+
+.nav-link.active:hover::after {
+    width: 100%;
+}
+
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s;
+}
+
+.user-avatar:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 0 20px rgba(255, 105, 180, 0.6);
+}
+
+.user-name {
+    font-size: 15px;
+    color: var(--light);
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.logout-btn {
+    background: linear-gradient(45deg, var(--danger), #FF6B6B);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: white;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    padding: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(255, 69, 0, 0.3);
+}
+
+.logout-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 69, 0, 0.4);
+    background: linear-gradient(45deg, #ff3b30, var(--danger));
+}
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.nav-toggle span {
+    width: 22px;
+    height: 3px;
+    background: var(--light);
+    margin: 3px 0;
+    transition: 0.3s;
+    border-radius: 2px;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .nav-menu {
+        position: fixed;
+        top: 60px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 60px);
+        background: rgba(25, 25, 35, 0.95);
+        backdrop-filter: blur(10px);
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 20px;
+        transition: 0.3s;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    
+    .nav-menu.active {
+        left: 0;
+    }
+    
+    .nav-link {
+        width: 80%;
+        margin: 12px 0;
+        justify-content: center;
+        font-size: 16px;
+    }
+    
+    .nav-toggle {
+        display: flex;
+    }
+    
+    .nav-user {
+        display: none;
+    }
+    
+    .nav-container {
+        padding: 0 20px;
+    }
+}
+
+/* 导航栏进入动画 */
+@keyframes navbarFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes navbarSlideDown {
+    from {
+        transform: translateY(-30px);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.main-navbar {
+    animation: navbarFadeIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), navbarSlideDown 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+</style>
+
+<script>
+// 导航栏交互脚本
+document.addEventListener('DOMContentLoaded', function() {
+    const navToggle = document.getElementById('navToggle');
+    const navMenu = document.getElementById('navMenu');
+    
+    // 移动端菜单切换
+    navToggle.addEventListener('click', function() {
+        navMenu.classList.toggle('active');
+        
+        // 汉堡菜单动画
+        const spans = navToggle.querySelectorAll('span');
+        if (navMenu.classList.contains('active')) {
+            spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+            spans[1].style.opacity = '0';
+            spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+        } else {
+            spans[0].style.transform = 'none';
+            spans[1].style.opacity = '1';
+            spans[2].style.transform = 'none';
+        }
+    });
+    
+    // 滚动时导航栏样式变化
+    window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('mainNavbar');
+        if (window.scrollY > 100) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+    
+    // 设置当前页面的导航链接为活跃状态
+    const currentPath = window.location.pathname.split('/').pop();
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    navLinks.forEach(link => {
+        const linkPath = link.getAttribute('href');
+        if (linkPath === currentPath) {
+            link.classList.add('active');
+        }
+    });
+    
+    // 登出按钮功能
+    const logoutBtn = document.querySelector('.logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+            if (typeof authManager !== 'undefined') {
+                authManager.clearSession();
+            }
+            setTimeout(() => {
+                if (typeof showAlert !== 'undefined') {
+                    showAlert('您已成功登出系统', 'success');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('您已成功登出系统', 'success');
+} else {
+    alert('您已成功登出系统');
+}
+                }
+                window.location.href = './login.html';
+            }, 100);
+        });
+    }
+});
+</script>

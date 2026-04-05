@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能教室管理系统 - 监控</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入LuminaUI样式 -->
+    <link rel="stylesheet" href="LuminaUI/css/lumina.css">
+    <link rel="stylesheet" href="LuminaUI/css/buttons.css">
+    <!-- 引入确认选择器样式 -->
+    <link rel="stylesheet" href="css/confirm-selector.css">
+    <link rel="stylesheet" href="LuminaUI/css/notification.css">
+    <link rel="stylesheet" href="css/dynamic-island.css">
+    <!-- 引入页面切换动画样式 -->
+    
+    <style>
+        :root {
+            --primary: #6C63FF; /* 紫色系作为主要强调色，更显灵动 */
+            --secondary: #4A44A8;
+            --accent: #FF6584; /* 活力粉色 */
+            --light: #F8F9FF; /* 淡紫色背景 */
+            --dark: #2A2D3A; /* 深色文字 */
+            --success: #4DB1A7; /* 绿色 */
+            --warning: #FFB242; /* 橙色 */
+            --danger: #FF6B6B; /* 红色 */
+            --gray: #9599A8; /* 灰色文字 */
+            --gray-medium: #6C7284; /* 中等灰色 */
+            --card-bg: rgba(255, 255, 255, 0.75); /* 高透明度毛玻璃效果 */
+            --glass-bg: rgba(255, 255, 255, 0.75); /* 毛玻璃效果 */
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15); /* 柔和阴影 */
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 平滑过渡 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%); /* 柔和渐变背景 */
+            min-height: 100vh;
+            padding-top: 70px; /* 为固定导航栏留出空间 */
+            color: var(--dark);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 背景装饰元素 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 101, 132, 0.05) 0%, rgba(255, 255, 255, 0) 20%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 95%;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 90vh;
+        }
+
+        /* 导航栏样式 - 高级毛玻璃设计 */
+        .main-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.85); /* 毛玻璃效果 */
+            backdrop-filter: blur(16px); /* 毛玻璃模糊效果 */
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 1000;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .main-navbar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 18px;
+            transition: var(--transition);
+        }
+
+        .nav-brand:hover {
+            transform: translateX(5px);
+        }
+
+        .nav-brand i {
+            font-size: 24px;
+            transition: var(--transition);
+        }
+
+        .nav-brand:hover i {
+            transform: rotate(5deg);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--gray-medium);
+            padding: 10px 16px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 8px;
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: var(--transition);
+            border-radius: 2px;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+            height: 3px;
+        }
+
+        .nav-link.active::before {
+            opacity: 0.2;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .user-name {
+            font-size: 15px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .logout-btn:hover {
+            color: var(--primary);
+            background: rgba(108, 99, 255, 0.1);
+            transform: rotate(15deg);
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .nav-toggle span {
+            width: 22px;
+            height: 2px;
+            background: var(--primary);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* 内容区域样式 - 取消卡片设计 */
+        .content {
+            padding: 20px 0;
+            min-height: calc(100vh - 130px);
+            line-height: 1.6;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            background: var(--card-bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(108, 99, 255, 0.4);
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        /* 区域样式 - 取消卡片设计 */
+        .section {
+            background: var(--glass-bg);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            line-height: 1.5;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        th {
+            background: rgba(108, 99, 255, 0.1);
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        tr:hover {
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        .btn-success {
+            background: linear-gradient(90deg, var(--success), #5BC0BE);
+            color: white;
+            box-shadow: 0 4px 15px rgba(77, 177, 167, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(77, 177, 167, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(90deg, var(--warning), #FF9A3D);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 178, 66, 0.3);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 178, 66, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, var(--danger), #FF7B7B);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        /* 统一按钮动画效果 */
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: translateY(-1px) scale(0.98) !important;
+            transition: transform 0.1s ease;
+        }
+
+        /* 所有按钮的统一悬停效果 */
+        .btn-primary,
+        .btn-success,
+        .btn-warning,
+        .btn-danger,
+        .btn-secondary,
+        .btn-info {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+
+        /* 按钮涟漪效果 */
+        .ripple-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .ripple-effect:active::after {
+            animation: ripple 0.6s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(50, 50);
+                opacity: 0;
+            }
+        }
+
+        /* 日志内容样式 */
+        .log-content {
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid var(--glass-border);
+            color: var(--dark);
+        }
+
+        /* 页脚样式 - 通透清爽风格 */
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--gray); /* 三级文字色 */
+            font-size: 14px; /* 按照设计要求 */
+            background: rgba(255, 255, 255, 0.5); /* 毛玻璃效果 */
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer a {
+            color: var(--gray-medium); /* 二级文字色 */
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .footer a:hover {
+            color: var(--primary); /* 悬停时使用强调色 */
+            transform: translateX(3px);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 130px; /* 移动端需要更多顶部空间 */
+            }
+
+            .content {
+                padding: 25px;
+            }
+
+            .nav-container {
+                padding: 0 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .page-header h2 {
+                font-size: 24px;
+            }
+
+            .back-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            .btn {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 导航栏 -->
+        <nav class="main-navbar" id="mainNavbar">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>智能教室管理系统</span>
+                </div>
+                
+                <div class="nav-menu" id="navMenu">
+                    <a href="main.html" class="nav-link"><i class="fas fa-home"></i> 控制台</a>
+                    <a href="score.html" class="nav-link"><i class="fas fa-coins"></i> 积分管理</a>
+                    <a href="rules.html" class="nav-link"><i class="fas fa-book"></i> 规则管理</a>
+                    <a href="random.html" class="nav-link"><i class="fas fa-random"></i> 随机抽号</a>
+                    <a href="homework.html" class="nav-link"><i class="fas fa-book-open"></i> 作业管理</a>
+                    <a href="clean.html" class="nav-link"><i class="fas fa-broom"></i> 卫生管理</a>
+                    <a href="settings.html" class="nav-link"><i class="fas fa-cog"></i> 系统设置</a>
+                    <a href="monitor.html" class="nav-link active"><i class="fas fa-server"></i> 系统监控</a>
+                    <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> 数据大屏</a>
+                    <a href="lab.html" class="nav-link"><i class="fas fa-flask"></i> 实验室</a>
+                </div>
+                
+                <div class="nav-user">
+                    <div class="user-avatar">A</div>
+                    <span class="user-name">管理员</span>
+                    <button class="logout-btn" title="退出登录"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+                
+                <div class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- 主内容区域 -->
+        <div class="content">
+            <div class="page-header">
+                <h2><i class="fas fa-server"></i> 系统监控</h2>
+                <button class="back-btn"><i class="fas fa-arrow-left"></i> 返回控制台</button>
+            </div>
+            
+            <div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
+                <!-- 系统信息 -->
+                <div class="section">
+                    <h3 class="section-header"><i class="fas fa-info-circle"></i> 系统信息</h3>
+                    <div class="form-group">
+                        <label><i class="fas fa-microchip"></i> 浏览器信息</label>
+                        <div id="browserInfo" style="background: var(--glass-bg); padding: 15px; border-radius: 8px; margin-top: 10px;">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-database"></i> 存储使用情况</label>
+                        <div id="storageInfo" style="background: var(--glass-bg); padding: 15px; border-radius: 8px; margin-top: 10px;">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 系统资源监控 -->
+                <div class="section">
+                    <h3 class="section-header"><i class="fas fa-server"></i> 系统资源监控</h3>
+                    <div class="form-group">
+                        <label><i class="fas fa-microchip"></i> CPU使用率</label>
+                        <div id="cpuUsage" style="background: var(--glass-bg); padding: 15px; border-radius: 8px; margin-top: 10px; font-weight: bold; font-size: 18px;">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-memory"></i> 内存使用率</label>
+                        <div id="memoryUsage" style="background: var(--glass-bg); padding: 15px; border-radius: 8px; margin-top: 10px; font-weight: bold; font-size: 18px;">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-hdd"></i> 磁盘使用率</label>
+                        <div id="diskUsage" style="background: var(--glass-bg); padding: 15px; border-radius: 8px; margin-top: 10px; font-weight: bold; font-size: 18px;">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 数据统计 -->
+                <div class="section">
+                    <h3 class="section-header"><i class="fas fa-chart-bar"></i> 数据统计</h3>
+                    <div class="form-group">
+                        <label><i class="fas fa-users"></i> 学生总数</label>
+                        <div id="studentCount" style="background: var(--glass-bg); padding: 15px; border-radius: 8px; margin-top: 10px; font-weight: bold; font-size: 18px;">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-tasks"></i> 作业总数</label>
+                        <div id="homeworkCount" style="background: var(--glass-bg); padding: 15px; border-radius: 8px; margin-top: 10px; font-weight: bold; font-size: 18px;">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-book"></i> 规则总数</label>
+                        <div id="ruleCount" style="background: var(--glass-bg); padding: 15px; border-radius: 8px; margin-top: 10px; font-weight: bold; font-size: 18px;">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-history"></i> 操作记录数</label>
+                        <div id="operationCount" style="background: var(--glass-bg); padding: 15px; border-radius: 8px; margin-top: 10px; font-weight: bold; font-size: 18px;">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 实时系统监控 -->
+            <div class="section">
+                <h3 class="section-header"><i class="fas fa-wave-square"></i> 实时系统监控</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                    <div class="form-group">
+                        <label><i class="fas fa-thermometer-half"></i> 系统温度</label>
+                        <div id="temperatureInfo" style="background: var(--glass-bg); padding: 15px; border-radius: 8px; margin-top: 10px; font-weight: bold; font-size: 16px;">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-bolt"></i> 系统负载</label>
+                        <div id="loadAverage" style="background: var(--glass-bg); padding: 15px; border-radius: 8px; margin-top: 10px; font-weight: bold; font-size: 16px;">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> 系统运行时间</label>
+                        <div id="systemUptime" style="background: var(--glass-bg); padding: 15px; border-radius: 8px; margin-top: 10px; font-weight: bold; font-size: 16px;">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-network-wired"></i> 网络信息</label>
+                        <div id="networkInfo" style="background: var(--glass-bg); padding: 15px; border-radius: 8px; margin-top: 10px; font-weight: bold; font-size: 16px;">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 系统日志 -->
+            <div class="section">
+                <h3 class="section-header"><i class="fas fa-terminal"></i> 系统日志</h3>
+                <div class="log-content" id="logContent">
+                    <!-- 日志内容将动态加载 -->
+                </div>
+            </div>
+            
+            <!-- 操作按钮 -->
+            <div class="section">
+                <h3 class="section-header"><i class="fas fa-tools"></i> 系统操作</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <button id="clearStorageBtn" class="btn btn-warning"><i class="fas fa-trash-alt"></i> 清空本地存储</button>
+                    <button id="exportDataBtn" class="btn btn-success"><i class="fas fa-file-export"></i> 导出数据</button>
+                    <button id="importDataBtn" class="btn btn-primary"><i class="fas fa-file-import"></i> 导入数据</button>
+                    <button id="backupBtn" class="btn btn-info"><i class="fas fa-hdd"></i> 备份系统</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>智能教室管理系统</p>
+            <span>•</span>
+            <a href="LuminaUI/index.html" target="_blank">
+                <span>Powered by LuminaUI</span>
+            </a>
+        </div>
+    </div>
+    
+    <script src="js/confirm-selector.js"></script>
+    <script>
+        // 本地存储键名
+        const STORAGE_KEYS = {
+            students: 'students',
+            homework: 'homework',
+            classRules: 'class_rules',
+            operations: 'operations',
+            systemLogs: 'system_logs'
+        };
+
+        // 导航栏交互脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            const navToggle = document.getElementById('navToggle');
+            const navMenu = document.getElementById('navMenu');
+            
+            // 移动端菜单切换
+            navToggle && navToggle.addEventListener('click', function() {
+                navMenu && navMenu.classList.toggle('active');
+                
+                // 汉堡菜单动画
+                const spans = navToggle.querySelectorAll('span');
+                if (navMenu && navMenu.classList.contains('active')) {
+                    spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                    spans[1].style.opacity = '0';
+                    spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+                } else {
+                    spans[0].style.transform = 'none';
+                    spans[1].style.opacity = '1';
+                    spans[2].style.transform = 'none';
+                }
+            });
+            
+            // 滚动时导航栏样式变化
+            window.addEventListener('scroll', function() {
+                const navbar = document.getElementById('mainNavbar');
+                if (navbar) {
+                    if (window.scrollY > 100) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                }
+            });
+            
+            // 设置当前页面的导航链接为活跃状态
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const linkPath = link.getAttribute('href');
+                if (linkPath === currentPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            // 加载系统信息
+            loadSystemInfo();
+            loadStatistics();
+            loadSystemResources(); // 新增：加载系统资源信息
+            loadRealTimeInfo(); // 新增：加载实时系统信息
+            loadSystemLogs();
+            
+            // 定期更新实时数据
+            setInterval(updateRealTimeData, 5000); // 每5秒更新一次实时数据
+            
+            // 绑定按钮事件
+            document.getElementById('clearStorageBtn').addEventListener('click', clearAllStorage);
+            document.getElementById('exportDataBtn').addEventListener('click', exportAllData);
+            document.getElementById('importDataBtn').addEventListener('click', importData);
+            document.getElementById('backupBtn').addEventListener('click', backupSystem);
+            
+            // 导航栏返回按钮
+            document.querySelector('.back-btn').addEventListener('click', () => {
+                window.location.href = 'main.html';
+            });
+            
+            // 登出按钮功能
+            const logoutBtn = document.querySelector('.logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    // 清除认证会话
+                    if (typeof authManager !== 'undefined') {
+                        authManager.clearSession();
+                    }
+                    if (typeof showAlert !== 'undefined') {
+                        showAlert('您已成功登出系统', 'success');
+                    } else {
+                        alert('您已成功登出系统');
+                    }
+                });
+            }
+        });
+
+        // 加载系统信息
+        function loadSystemInfo() {
+            const browserInfo = document.getElementById('browserInfo');
+            const storageInfo = document.getElementById('storageInfo');
+            
+            // 浏览器信息
+            const userAgent = navigator.userAgent;
+            const platform = navigator.platform;
+            const language = navigator.language;
+            const cookieEnabled = navigator.cookieEnabled;
+            const onLine = navigator.onLine;
+            
+            browserInfo.innerHTML = `
+                <p><strong>用户代理:</strong> ${userAgent}</p>
+                <p><strong>平台:</strong> ${platform}</p>
+                <p><strong>语言:</strong> ${language}</p>
+                <p><strong>Cookie启用:</strong> ${cookieEnabled ? '是' : '否'}</p>
+                <p><strong>在线状态:</strong> ${onLine ? '在线' : '离线'}</p>
+            `;
+            
+            // 存储信息
+            try {
+                const estimatedStorage = estimateStorageUsage();
+                storageInfo.innerHTML = `
+                    <p><strong>估计存储使用:</strong> ${estimatedStorage.used} / ${estimatedStorage.total}</p>
+                    <p><strong>使用率:</strong> ${estimatedStorage.percentage}%</p>
+                    <p><strong>可用空间:</strong> ${estimatedStorage.remaining}</p>
+                `;
+            } catch (error) {
+                storageInfo.innerHTML = `<p><strong>存储信息获取失败:</strong> ${error.message}</p>`;
+            }
+        }
+
+        // 估算存储使用情况
+        function estimateStorageUsage() {
+            let totalSize = 0;
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    totalSize += localStorage[key].length + key.length;
+                }
+            }
+            const totalSizeKB = (totalSize / 1024).toFixed(2);
+            const totalKB = 10240; // 估计总可用空间为10MB
+            const percentage = ((totalSizeKB / totalKB) * 100).toFixed(2);
+            const remainingKB = (totalKB - totalSizeKB).toFixed(2);
+            
+            return {
+                used: `${totalSizeKB} KB`,
+                total: `${totalKB} KB`,
+                remaining: `${remainingKB} KB`,
+                percentage: percentage
+            };
+        }
+
+        // 加载统计数据
+        function loadStatistics() {
+            try {
+                const students = JSON.parse(localStorage.getItem(STORAGE_KEYS.students) || '[]');
+                const homework = JSON.parse(localStorage.getItem(STORAGE_KEYS.homework) || '[]');
+                const classRules = JSON.parse(localStorage.getItem(STORAGE_KEYS.classRules) || '[]');
+                const operations = JSON.parse(localStorage.getItem(STORAGE_KEYS.operations) || '[]');
+                
+                document.getElementById('studentCount').textContent = students.length;
+                document.getElementById('homeworkCount').textContent = homework.length;
+                document.getElementById('ruleCount').textContent = classRules.length;
+                document.getElementById('operationCount').textContent = operations.length;
+            } catch (error) {
+                console.error('加载统计数据失败:', error);
+                document.getElementById('studentCount').textContent = '错误';
+                document.getElementById('homeworkCount').textContent = '错误';
+                document.getElementById('ruleCount').textContent = '错误';
+                document.getElementById('operationCount').textContent = '错误';
+            }
+        }
+
+        // 加载系统资源信息
+        function loadSystemResources() {
+            try {
+                // 获取CPU使用率（模拟值，实际应用中需要从服务器获取）
+                const cpuUsage = (Math.random() * 30 + 10).toFixed(1); // 模拟10-40%的CPU使用率
+                document.getElementById('cpuUsage').innerHTML = `
+                    <span style="color: var(--success);">${cpuUsage}%</span> 
+                    <div style="width: 100%; height: 6px; background: rgba(0,0,0,0.1); border-radius: 3px; margin-top: 5px; overflow: hidden;">
+                        <div style="width: ${cpuUsage}%; height: 100%; background: linear-gradient(90deg, var(--success), var(--primary)); border-radius: 3px;"></div>
+                    </div>
+                `;
+
+                // 获取内存使用率（模拟值）
+                const memoryUsage = (Math.random() * 40 + 30).toFixed(1); // 模拟30-70%的内存使用率
+                document.getElementById('memoryUsage').innerHTML = `
+                    <span style="color: var(--warning);">${memoryUsage}%</span> 
+                    <div style="width: 100%; height: 6px; background: rgba(0,0,0,0.1); border-radius: 3px; margin-top: 5px; overflow: hidden;">
+                        <div style="width: ${memoryUsage}%; height: 100%; background: linear-gradient(90deg, var(--warning), var(--accent)); border-radius: 3px;"></div>
+                    </div>
+                `;
+
+                // 获取磁盘使用率（模拟值）
+                const diskUsage = (Math.random() * 30 + 20).toFixed(1); // 模拟20-50%的磁盘使用率
+                document.getElementById('diskUsage').innerHTML = `
+                    <span style="color: var(--primary);">${diskUsage}%</span> 
+                    <div style="width: 100%; height: 6px; background: rgba(0,0,0,0.1); border-radius: 3px; margin-top: 5px; overflow: hidden;">
+                        <div style="width: ${diskUsage}%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 3px;"></div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('加载系统资源信息失败:', error);
+            }
+        }
+
+        // 加载实时系统监控信息
+        function loadRealTimeInfo() {
+            try {
+                // 系统温度信息（模拟值）
+                const cpuTemp = (Math.random() * 10 + 45).toFixed(1); // 模拟45-55°C
+                const gpuTemp = (Math.random() * 8 + 35).toFixed(1); // 模拟35-43°C
+                document.getElementById('temperatureInfo').innerHTML = `
+                    <div>CPU: <span style="color: var(--primary);">${cpuTemp}°C</span></div>
+                    <div>GPU: <span style="color: var(--primary);">${gpuTemp}°C</span></div>
+                `;
+
+                // 系统负载（模拟值）
+                const load1 = (Math.random() * 0.5 + 0.1).toFixed(2);
+                const load5 = (Math.random() * 0.4 + 0.1).toFixed(2);
+                const load15 = (Math.random() * 0.3 + 0.1).toFixed(2);
+                document.getElementById('loadAverage').innerHTML = `
+                    <div>1分钟: <span style="color: var(--success);">${load1}</span></div>
+                    <div>5分钟: <span style="color: var(--warning);">${load5}</span></div>
+                    <div>15分钟: <span style="color: var(--primary);">${load15}</span></div>
+                `;
+
+                // 系统运行时间（模拟值，基于页面加载时间）
+                const startTime = new Date();
+                const uptime = ((Date.now() - startTime.getTime()) / 1000 / 60).toFixed(1); // 分钟
+                document.getElementById('systemUptime').innerHTML = `
+                    <div>当前会话: <span style="color: var(--success);">${uptime} 分钟</span></div>
+                    <div>服务器运行: <span style="color: var(--primary);">--</span></div>
+                `;
+
+                // 网络信息（模拟值）
+                const networkRx = (Math.random() * 100).toFixed(1);
+                const networkTx = (Math.random() * 50).toFixed(1);
+                document.getElementById('networkInfo').innerHTML = `
+                    <div>接收: <span style="color: var(--primary);">${networkRx} KB/s</span></div>
+                    <div>发送: <span style="color: var(--accent);">${networkTx} KB/s</span></div>
+                `;
+            } catch (error) {
+                console.error('加载实时信息失败:', error);
+            }
+        }
+
+        // 加载系统日志
+        function loadSystemLogs() {
+            try {
+                const logs = JSON.parse(localStorage.getItem(STORAGE_KEYS.systemLogs) || '[]');
+                const logContent = document.getElementById('logContent');
+                
+                if (logs.length === 0) {
+                    logContent.innerHTML = '<p style="text-align: center; color: var(--gray);">暂无系统日志</p>';
+                    return;
+                }
+                
+                // 显示最近的50条日志
+                const recentLogs = logs.slice(-50).reverse();
+                const logHTML = recentLogs.map(log => `
+                    <div style="margin-bottom: 8px; padding: 8px; border-left: 3px solid var(--primary); background: rgba(255,255,255,0.1); border-radius: 4px;">
+                        <strong style="color: var(--primary);">${log.timestamp}</strong> - ${log.message}
+                    </div>
+                `).join('');
+                
+                logContent.innerHTML = logHTML;
+            } catch (error) {
+                console.error('加载系统日志失败:', error);
+                document.getElementById('logContent').innerHTML = '<p style="text-align: center; color: var(--danger);">加载日志失败</p>';
+            }
+        }
+
+        // 定期更新实时监控数据
+        function updateRealTimeData() {
+            loadSystemResources();
+            loadRealTimeInfo();
+        }
+
+        // 添加系统日志
+        function addSystemLog(message) {
+            try {
+                let logs = JSON.parse(localStorage.getItem(STORAGE_KEYS.systemLogs) || '[]');
+                const timestamp = new Date().toLocaleString('zh-CN');
+                
+                logs.push({
+                    timestamp: timestamp,
+                    message: message
+                });
+                
+                // 只保留最近的200条日志
+                if (logs.length > 200) {
+                    logs = logs.slice(-200);
+                }
+                
+                localStorage.setItem(STORAGE_KEYS.systemLogs, JSON.stringify(logs));
+                loadSystemLogs();
+            } catch (error) {
+                console.error('添加系统日志失败:', error);
+            }
+        }
+
+        // 清空所有存储
+        function clearAllStorage() {
+            if (!confirm('确定要清空所有本地存储数据吗？此操作不可恢复！')) return;
+            
+            try {
+                localStorage.clear();
+                addSystemLog('管理员清空了所有本地存储数据');
+                loadSystemInfo();
+                loadStatistics();
+                loadSystemLogs();
+                
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.success('所有存储数据已清空');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+                        showAlert('所有存储数据已清空', 'success');
+                    } else {
+                        alert('所有存储数据已清空');
+                    }
+                }
+            } catch (error) {
+                console.error('清空存储失败:', error);
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('清空存储失败，请重试');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+                        showAlert('清空存储失败，请重试', 'error');
+                    } else {
+                        alert('清空存储失败，请重试');
+                    }
+                }
+            }
+        }
+
+        // 导出所有数据
+        function exportAllData() {
+            try {
+                const data = {};
+                for (let key in localStorage) {
+                    if (localStorage.hasOwnProperty(key)) {
+                        try {
+                            data[key] = JSON.parse(localStorage.getItem(key));
+                        } catch (e) {
+                            data[key] = localStorage.getItem(key);
+                        }
+                    }
+                }
+                
+                const dataStr = JSON.stringify(data, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `smart-classroom-data-${new Date().toISOString().slice(0, 10)}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                addSystemLog('管理员导出了系统数据');
+                
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.success('数据导出成功');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+                        showAlert('数据导出成功', 'success');
+                    } else {
+                        alert('数据导出成功');
+                    }
+                }
+            } catch (error) {
+                console.error('导出数据失败:', error);
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('导出数据失败，请重试');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+                        showAlert('导出数据失败，请重试', 'error');
+                    } else {
+                        alert('导出数据失败，请重试');
+                    }
+                }
+            }
+        }
+
+        // 导入数据
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        if (!confirm(`确定要导入数据吗？这将覆盖当前所有数据！\n学生数据: ${data.students ? data.students.length : 0}条\n作业数据: ${data.homework ? data.homework.length : 0}条\n规则数据: ${data.class_rules ? data.class_rules.length : 0}条`)) return;
+                        
+                        // 清空当前数据
+                        localStorage.clear();
+                        
+                        // 导入新数据
+                        for (let key in data) {
+                            if (data.hasOwnProperty(key)) {
+                                if (typeof data[key] === 'object') {
+                                    localStorage.setItem(key, JSON.stringify(data[key]));
+                                } else {
+                                    localStorage.setItem(key, data[key]);
+                                }
+                            }
+                        }
+                        
+                        addSystemLog('管理员导入了系统数据');
+                        loadSystemInfo();
+                        loadStatistics();
+                        loadSystemLogs();
+                        
+                        if (typeof dynamicIsland !== 'undefined') {
+                            dynamicIsland.success('数据导入成功');
+                        } else {
+                            if (typeof showAlert !== 'undefined') {
+                                showAlert('数据导入成功', 'success');
+                            } else {
+                                alert('数据导入成功');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('导入数据失败:', error);
+                        if (typeof dynamicIsland !== 'undefined') {
+                            dynamicIsland.error('数据格式错误，请检查文件');
+                        } else {
+                            if (typeof showAlert !== 'undefined') {
+                                showAlert('数据格式错误，请检查文件', 'error');
+                            } else {
+                                alert('数据格式错误，请检查文件');
+                            }
+                        }
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        // 备份系统
+        function backupSystem() {
+            try {
+                const backupData = {};
+                for (let key in localStorage) {
+                    if (localStorage.hasOwnProperty(key)) {
+                        try {
+                            backupData[key] = JSON.parse(localStorage.getItem(key));
+                        } catch (e) {
+                            backupData[key] = localStorage.getItem(key);
+                        }
+                    }
+                }
+                
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                const filename = `smart-classroom-backup-${timestamp}.json`;
+                const dataStr = JSON.stringify(backupData, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                addSystemLog(`管理员创建了系统备份: ${filename}`);
+                
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.success('系统备份成功');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+                        showAlert('系统备份成功', 'success');
+                    } else {
+                        alert('系统备份成功');
+                    }
+                }
+            } catch (error) {
+                console.error('备份系统失败:', error);
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('备份系统失败，请重试');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+                        showAlert('备份系统失败，请重试', 'error');
+                    } else {
+                        alert('备份系统失败，请重试');
+                    }
+                }
+            }
+        }
+
+        // 页面加载时添加日志
+        addSystemLog('系统监控页面已加载');
+    </script>
+    
+    <!-- 引入页面切换动画管理器 -->
+    
+</body>
+<!-- 引入Dynamic Island管理器 -->
+<script src="js/dynamic-island.js"></script>
+<script>
+    // 页面加载完成后，确保Dynamic Island显示问候语
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof dynamicIsland !== 'undefined') {
+            // 短暂延迟后显示时间，确保页面完全加载
+            setTimeout(() => {
+                dynamicIsland.updateTime();
+            }, 1000);
+        }
+    });
+</script>
+</html>

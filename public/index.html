@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面跳转中...</title>
+    <!-- 使用 JavaScript 实现跳转 -->
+    <script>
+        // 页面加载完成后立即执行跳转
+        window.addEventListener('DOMContentLoaded', (event) => {
+            // 跳转到 login.html
+            window.location.href = 'login.html';
+        });
+    </script>
+</head>
+<body>
+    <!-- 如果 JavaScript 因任何原因未执行，提供一个备用的 Meta Refresh 跳转 -->
+    <noscript>
+        <p>您的浏览器不支持 JavaScript 或已禁用。请手动跳转到 <a href="login.html">login.html</a>。</p>
+    </noscript>
+    <!-- Meta Refresh 跳转，1秒后执行 -->
+    <meta http-equiv="refresh" content="1; url=login.html">
+    <p>正在跳转到登录页面，请稍候...</p>
+</body>
+</html>

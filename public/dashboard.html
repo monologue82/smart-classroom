@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班级管理系统 - 数据大屏</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入LuminaUI样式 -->
+    <link rel="stylesheet" href="LuminaUI/css/lumina.css">
+    <link rel="stylesheet" href="LuminaUI/css/buttons.css">
+    <link rel="stylesheet" href="LuminaUI/css/notification.css">
+    <!-- 引入页面切换动画样式 -->
+    
+    <style>
+        :root {
+            --primary: #6C63FF; /* 紫色系作为主要强调色，更显灵动 */
+            --secondary: #4A44A8;
+            --accent: #FF6584; /* 活力粉色 */
+            --light: #F8F9FF; /* 淡紫色背景 */
+            --dark: #2A2D3A; /* 深色文字 */
+            --success: #4DB1A7; /* 绿色 */
+            --warning: #FFB242; /* 橙色 */
+            --danger: #FF6B6B; /* 红色 */
+            --gray: #9599A8; /* 灰色文字 */
+            --gray-medium: #6C7284; /* 中等灰色 */
+            --card-bg: rgba(255, 255, 255, 0.75); /* 高透明度毛玻璃效果 */
+            --glass-bg: rgba(255, 255, 255, 0.75); /* 毛玻璃效果 */
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15); /* 柔和阴影 */
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 平滑过渡 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%); /* 柔和渐变背景 */
+            min-height: 100vh;
+            padding-top: 70px; /* 为固定导航栏留出空间 */
+            color: var(--dark);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 背景装饰元素 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 101, 132, 0.05) 0%, rgba(255, 255, 255, 0) 20%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 95%;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 90vh;
+        }
+
+        /* 导航栏样式 - 高级毛玻璃设计 */
+        .main-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.85); /* 毛玻璃效果 */
+            backdrop-filter: blur(16px); /* 毛玻璃模糊效果 */
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 1000;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .main-navbar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 18px;
+            transition: var(--transition);
+        }
+
+        .nav-brand:hover {
+            transform: translateX(5px);
+        }
+
+        .nav-brand i {
+            font-size: 24px;
+            transition: var(--transition);
+        }
+
+        .nav-brand:hover i {
+            transform: rotate(5deg);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--gray-medium);
+            padding: 10px 16px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 8px;
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: var(--transition);
+            border-radius: 2px;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+            height: 3px;
+        }
+
+        .nav-link.active::before {
+            opacity: 0.2;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .user-name {
+            font-size: 15px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .logout-btn:hover {
+            color: var(--primary);
+            background: rgba(108, 99, 255, 0.1);
+            transform: rotate(15deg);
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .nav-toggle span {
+            width: 22px;
+            height: 2px;
+            background: var(--primary);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* 内容区域样式 - 取消卡片设计 */
+        .content {
+            padding: 20px 0;
+            min-height: calc(100vh - 130px);
+            line-height: 1.6;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            background: var(--card-bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(108, 99, 255, 0.4);
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        /* 数据大屏网格布局 */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* 高级动画效果 */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            animation: fadeInUp 0.7s ease forwards;
+            opacity: 0;
+            background: var(--card-bg); /* 毛玻璃效果 */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 25px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        .section:nth-child(1) { animation-delay: 0.1s; }
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.3s; }
+        .section:nth-child(4) { animation-delay: 0.4s; }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-color: rgba(108, 99, 255, 0.2);
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: var(--transition);
+        }
+
+        .section:hover::before {
+            transform: scaleX(1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        /* 图表样式 */
+        .chart-container {
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            margin-bottom: 20px;
+        }
+
+        .chart-placeholder {
+            text-align: center;
+            color: var(--gray-medium);
+        }
+
+        .chart-placeholder i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+            color: var(--primary);
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            line-height: 1.5;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        th {
+            background: rgba(108, 99, 255, 0.1);
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        tr:hover {
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        /* 状态样式 */
+        .status-completed {
+            background: rgba(77, 177, 167, 0.15);
+            color: #4DB1A7;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .status-not-completed {
+            background: rgba(255, 107, 107, 0.15);
+            color: #FF6B6B;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .status-submitted {
+            background: rgba(77, 177, 167, 0.15);
+            color: #4DB1A7;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .status-not-submitted {
+            background: rgba(255, 107, 107, 0.15);
+            color: #FF6B6B;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .points-positive {
+            color: #4DB1A7;
+            font-weight: 600;
+        }
+
+        .points-negative {
+            color: #FF6B6B;
+            font-weight: 600;
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        /* 统计卡片样式 */
+        .stat-card {
+            background: var(--card-bg); /* 毛玻璃效果 */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray-medium);
+        }
+
+        /* 统一按钮动画效果 */
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: translateY(-1px) scale(0.98) !important;
+            transition: transform 0.1s ease;
+        }
+
+        /* 所有按钮的统一悬停效果 */
+        .btn-primary,
+        .btn-success,
+        .btn-warning,
+        .btn-danger,
+        .btn-secondary,
+        .btn-info {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+
+        /* 按钮涟漪效果 */
+        .ripple-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .ripple-effect:active::after {
+            animation: ripple 0.6s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(50, 50);
+                opacity: 0;
+            }
+        }
+
+        /* 页脚样式 - 通透清爽风格 */
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--gray); /* 三级文字色 */
+            font-size: 14px; /* 按照设计要求 */
+            background: rgba(255, 255, 255, 0.5); /* 毛玻璃效果 */
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer a {
+            color: var(--gray-medium); /* 二级文字色 */
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .footer a:hover {
+            color: var(--primary); /* 悬停时使用强调色 */
+            transform: translateX(3px);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 130px; /* 移动端需要更多顶部空间 */
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nav-container {
+                padding: 0 15px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .stat-card {
+                margin-bottom: 15px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 导航栏 -->
+        <nav class="main-navbar" id="mainNavbar">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>智能教室管理系统</span>
+                </div>
+                
+                <div class="nav-menu" id="navMenu">
+                    <a href="main.html" class="nav-link"><i class="fas fa-home"></i> 控制台</a>
+                    <a href="score.html" class="nav-link"><i class="fas fa-coins"></i> 积分管理</a>
+                    <a href="rules.html" class="nav-link"><i class="fas fa-book"></i> 规则管理</a>
+                    <a href="random.html" class="nav-link"><i class="fas fa-random"></i> 随机抽号</a>
+                    <a href="homework.html" class="nav-link"><i class="fas fa-book-open"></i> 作业管理</a>
+                    <a href="clean.html" class="nav-link"><i class="fas fa-broom"></i> 卫生管理</a>
+                    <a href="settings.html" class="nav-link"><i class="fas fa-cog"></i> 系统设置</a>
+                    <a href="monitor.html" class="nav-link"><i class="fas fa-server"></i> 系统监控</a>
+                    <a href="dashboard.html" class="nav-link active"><i class="fas fa-chart-line"></i> 数据大屏</a>
+                    <a href="lab.html" class="nav-link"><i class="fas fa-flask"></i> 实验室</a>
+                </div>
+                
+                <div class="nav-user">
+                    <div class="user-avatar">A</div>
+                    <span class="user-name">管理员</span>
+                    <button class="logout-btn" title="退出登录"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+                
+                <div class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- 主内容区域 -->
+        <div class="content">
+            <div class="page-header">
+                <h2><i class="fas fa-chart-line"></i> 数据大屏</h2>
+                <button class="back-btn"><i class="fas fa-arrow-left"></i> 返回控制台</button>
+            </div>
+            
+            <!-- 实时时间显示 -->
+            <div class="real-time" id="realTimeDisplay"></div>
+            
+            <!-- 统计概览 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-users fa-2x"></i>
+                    <div class="stat-value" id="totalStudents">0</div>
+                    <div class="stat-label">总学生数</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-tasks fa-2x"></i>
+                    <div class="stat-value" id="todayAssignments">0</div>
+                    <div class="stat-label">今日作业数</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-coins fa-2x"></i>
+                    <div class="stat-value" id="todayPoints">0</div>
+                    <div class="stat-label">今日积分操作</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-broom fa-2x"></i>
+                    <div class="stat-value" id="todayCleaning">0</div>
+                    <div class="stat-label">今日值日人员</div>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- 今日卫生清洁概况 -->
+                <div class="section">
+                    <h3 class="section-title"><i class="fas fa-broom"></i> 今日卫生清洁概况</h3>
+                    <div class="chart-container">
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-pie"></i>
+                            <h3>今日卫生清洁完成情况</h3>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>学生</th>
+                                <th>职位</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cleaningStatusBody">
+                            <!-- 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 今日积分操作记录 -->
+                <div class="section">
+                    <h3 class="section-title"><i class="fas fa-coins"></i> 今日积分操作记录</h3>
+                    <div class="chart-container">
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-bar"></i>
+                            <h3>今日积分变化趋势</h3>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>学生</th>
+                                <th>操作类型</th>
+                                <th>积分</th>
+                                <th>原因</th>
+                                <th>时间</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pointsOperationsBody">
+                            <!-- 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 今日作业上交情况 -->
+                <div class="section">
+                    <h3 class="section-title"><i class="fas fa-book-open"></i> 今日作业上交情况</h3>
+                    <div class="chart-container">
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-area"></i>
+                            <h3>今日作业上交率</h3>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>科目</th>
+                                <th>作业内容</th>
+                                <th>已交人数</th>
+                                <th>未交人数</th>
+                                <th>上交率</th>
+                            </tr>
+                        </thead>
+                        <tbody id="todayHomeworkBody">
+                            <!-- 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 昨日作业上交情况 -->
+                <div class="section">
+                    <h3 class="section-title"><i class="fas fa-history"></i> 昨日作业上交情况</h3>
+                    <div class="chart-container">
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>昨日作业上交率</h3>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>科目</th>
+                                <th>作业内容</th>
+                                <th>已交人数</th>
+                                <th>未交人数</th>
+                                <th>上交率</th>
+                            </tr>
+                        </thead>
+                        <tbody id="yesterdayHomeworkBody">
+                            <!-- 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>智能教室管理系统</p>
+            <span>•</span>
+            <a href="LuminaUI/index.html" target="_blank">
+                <span>Powered by LuminaUI</span>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // 本地存储键名
+        const STORAGE_KEYS = {
+            students: 'students',
+            operations: 'operations',
+            assignments: 'assignments',
+            homeworkStatus: 'homework_status',
+            cleanPositions: 'clean_positions',
+            cleanStatus: 'clean_status'
+        };
+
+        // 更新实时时间显示
+        function updateRealTime() {
+            const now = new Date();
+            document.getElementById('realTimeDisplay').textContent = 
+                '当前时间: ' + now.toLocaleString('zh-CN');
+        }
+
+        // 导航栏交互脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            const navToggle = document.getElementById('navToggle');
+            const navMenu = document.getElementById('navMenu');
+            
+            // 移动端菜单切换
+            navToggle && navToggle.addEventListener('click', function() {
+                navMenu && navMenu.classList.toggle('active');
+                
+                // 汉堡菜单动画
+                const spans = navToggle.querySelectorAll('span');
+                if (navMenu && navMenu.classList.contains('active')) {
+                    spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                    spans[1].style.opacity = '0';
+                    spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+                } else {
+                    spans[0].style.transform = 'none';
+                    spans[1].style.opacity = '1';
+                    spans[2].style.transform = 'none';
+                }
+            });
+            
+            // 滚动时导航栏样式变化
+            window.addEventListener('scroll', function() {
+                const navbar = document.getElementById('mainNavbar');
+                if (navbar) {
+                    if (window.scrollY > 100) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                }
+            });
+            
+            // 设置当前页面的导航链接为活跃状态
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const linkPath = link.getAttribute('href');
+                if (linkPath === currentPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            // 加载数据
+            loadDashboardData();
+            
+            // 导航栏返回按钮
+            document.querySelector('.back-btn').addEventListener('click', () => {
+                window.location.href = 'main.html';
+            });
+            
+            // 登出按钮功能
+            const logoutBtn = document.querySelector('.logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    // 清除认证会话
+                    if (typeof authManager !== 'undefined') {
+                        authManager.clearSession();
+                    }
+                    setTimeout(() => {
+                        if (typeof showAlert !== 'undefined') {
+                            showAlert('您已成功登出系统', 'success');
+                        } else {
+                            alert('您已成功登出系统');
+                        }
+                        window.location.href = './login.html';
+                    }, 1000);
+                });
+            }
+        });
+
+        // 加载仪表板数据
+        async function loadDashboardData() {
+            try {
+                // 加载所有必要数据
+                const students = JSON.parse(localStorage.getItem(STORAGE_KEYS.students) || '[]');
+                const operations = JSON.parse(localStorage.getItem(STORAGE_KEYS.operations) || '[]');
+                const assignments = JSON.parse(localStorage.getItem(STORAGE_KEYS.assignments) || '[]');
+                const homeworkStatus = JSON.parse(localStorage.getItem(STORAGE_KEYS.homeworkStatus) || '{}');
+                const cleanPositions = JSON.parse(localStorage.getItem(STORAGE_KEYS.cleanPositions) || '{}');
+                const cleanStatus = JSON.parse(localStorage.getItem(STORAGE_KEYS.cleanStatus) || '{}');
+                
+                // 更新统计概览
+                updateStatsOverview(students, operations, assignments, cleanPositions);
+                
+                // 渲染今日卫生清洁概况
+                renderCleaningStatus(cleanPositions, cleanStatus);
+                
+                // 渲染今日积分操作记录
+                renderPointsOperations(operations, students);
+                
+                // 渲染今日和昨日作业上交情况
+                renderHomeworkStatus(assignments, homeworkStatus, students);
+            } catch (error) {
+                console.error('加载仪表板数据失败:', error);
+            }
+        }
+
+        // 更新统计概览
+        function updateStatsOverview(students, operations, assignments, cleanPositions) {
+            document.getElementById('totalStudents').textContent = students.length;
+            
+            // 今日作业数
+            const today = new Date().toISOString().split('T')[0];
+            const todayAssignments = assignments.filter(a => a.date === today).length;
+            document.getElementById('todayAssignments').textContent = todayAssignments;
+            
+            // 今日积分操作数
+            const todayOperations = operations.filter(op => {
+                const opDate = new Date(op.time).toISOString().split('T')[0];
+                return opDate === today;
+            }).length;
+            document.getElementById('todayPoints').textContent = todayOperations;
+            
+            // 今日值日人员数
+            document.getElementById('todayCleaning').textContent = Object.keys(cleanPositions).length;
+        }
+
+        // 渲染今日卫生清洁概况
+        function renderCleaningStatus(cleanPositions, cleanStatus) {
+            const tbody = document.getElementById('cleaningStatusBody');
+            const today = new Date().toISOString().split('T')[0];
+            
+            // 初始化今日状态（默认全部完成）
+            if (!cleanStatus[today]) {
+                cleanStatus[today] = {};
+                Object.keys(cleanPositions).forEach(studentId => {
+                    cleanStatus[today][studentId] = true; // 默认已完成
+                });
+            }
+            
+            // 渲染今日状态
+            const rows = Object.keys(cleanPositions).map(studentId => {
+                const pos = cleanPositions[studentId];
+                const isCompleted = cleanStatus[today][studentId] !== false; // 默认为true
+                return `
+                    <tr>
+                        <td>${pos.name}</td>
+                        <td>${pos.position}</td>
+                        <td>
+                            <span class="${isCompleted ? 'status-completed' : 'status-not-completed'}">
+                                ${isCompleted ? '已完成' : '未完成'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = rows || '<tr><td colspan="3" style="text-align: center;">暂无值日人员</td></tr>';
+        }
+
+        // 渲染今日积分操作记录
+        function renderPointsOperations(operations, students) {
+            const tbody = document.getElementById('pointsOperationsBody');
+            const today = new Date().toISOString().split('T')[0];
+            
+            // 筛选今日的操作
+            const todayOperations = operations.filter(op => {
+                const opDate = new Date(op.time).toISOString().split('T')[0];
+                return opDate === today;
+            });
+            
+            // 只显示最近10条记录
+            const recentOperations = todayOperations.slice(-10).reverse();
+            
+            const rows = recentOperations.map(op => {
+                // 从操作记录中提取学生信息（如果存在）
+                const student = students.find(s => s.username === op.user) || { username: op.user };
+                return `
+                    <tr>
+                        <td>${student.username || '未知'}</td>
+                        <td>${op.type}</td>
+                        <td class="${op.points > 0 ? 'points-positive' : 'points-negative'}">
+                            ${op.points > 0 ? '+' : ''}${op.points}
+                        </td>
+                        <td>${op.reason}</td>
+                        <td>${new Date(op.time).toLocaleTimeString('zh-CN')}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = rows || '<tr><td colspan="5" style="text-align: center;">今日暂无积分操作</td></tr>';
+        }
+
+        // 渲染作业上交情况
+        function renderHomeworkStatus(assignments, homeworkStatus, students) {
+            const today = new Date().toISOString().split('T')[0];
+            const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+            
+            // 渲染今日作业上交情况
+            renderHomeworkForDate(today, assignments, homeworkStatus, students, 'todayHomeworkBody');
+            
+            // 渲染昨日作业上交情况
+            renderHomeworkForDate(yesterday, assignments, homeworkStatus, students, 'yesterdayHomeworkBody');
+        }
+
+        // 渲染指定日期的作业上交情况
+        function renderHomeworkForDate(date, assignments, homeworkStatus, students, tbodyId) {
+            const tbody = document.getElementById(tbodyId);
+            const studentCount = students.length;
+            
+            // 筛选指定日期的作业
+            const dateAssignments = assignments.filter(a => a.date === date);
+            
+            if (dateAssignments.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">暂无作业记录</td></tr>';
+                return;
+            }
+            
+            const rows = dateAssignments.map(assignment => {
+                // 计算已交人数
+                let submittedCount = 0;
+                if (homeworkStatus[assignment.id]) {
+                    submittedCount = Object.values(homeworkStatus[assignment.id]).filter(status => status).length;
+                } else {
+                    // 默认全部已提交
+                    submittedCount = studentCount;
+                }
+                
+                const notSubmittedCount = studentCount - submittedCount;
+                const submissionRate = studentCount > 0 ? Math.round((submittedCount / studentCount) * 100) : 0;
+                
+                return `
+                    <tr>
+                        <td>${assignment.subject}</td>
+                        <td>${assignment.content}</td>
+                        <td>${submittedCount}</td>
+                        <td>${notSubmittedCount}</td>
+                        <td>${submissionRate}%</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = rows;
+        }
+    </script>
+    <!-- 引入认证管理器 -->
+    <script src="js/auth.js"></script>
+    <!-- 引入LuminaUI JavaScript -->
+    <script src="LuminaUI/js/lumina.js"></script>
+    <script src="LuminaUI/js/notification.js"></script>
+    <!-- 引入Dynamic Island样式 -->
+    <link rel="stylesheet" href="css/dynamic-island.css">
+    <script>
+        // 页面加载完成后初始化LuminaUI
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化LuminaUI组件（如果存在相应的初始化函数）
+            if (typeof initButtons !== 'undefined') {
+                initButtons();
+            }
+            
+            // 页面访问控制
+            protectPage();
+        });
+    });
+    </script>
+    
+    <!-- 引入页面切换动画管理器 -->
+    
+<!-- 引入Dynamic Island管理器 -->
+<script src="js/dynamic-island.js"></script>
+<script>
+    // 页面加载完成后，确保Dynamic Island显示问候语
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof dynamicIsland !== 'undefined') {
+            // 短暂延迟后显示时间，确保页面完全加载
+            setTimeout(() => {
+                dynamicIsland.updateTime();
+            }, 1000);
+        }
+    });
+</script>
+</html>

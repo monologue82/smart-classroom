@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实验室访问验证</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入LuminaUI样式 -->
+    <link rel="stylesheet" href="LuminaUI/css/lumina.css">
+    <link rel="stylesheet" href="LuminaUI/css/buttons.css">
+    <link rel="stylesheet" href="LuminaUI/css/notification.css">
+    <!-- 引入页面切换动画样式 -->
+    
+    <style>
+        :root {
+            --primary: #6C63FF; /* 紫色系作为主要强调色，更显灵动 */
+            --secondary: #4A44A8;
+            --accent: #FF6584; /* 活力粉色 */
+            --light: #F8F9FF; /* 淡紫色背景 */
+            --dark: #2A2D3A; /* 深色文字 */
+            --success: #4DB1A7; /* 绿色 */
+            --warning: #FFB242; /* 橙色 */
+            --danger: #FF6B6B; /* 红色 */
+            --gray: #9599A8; /* 灰色文字 */
+            --gray-medium: #6C7284; /* 中等灰色 */
+            --card-bg: rgba(255, 255, 255, 0.75); /* 高透明度毛玻璃效果 */
+            --glass-bg: rgba(255, 255, 255, 0.75); /* 毛玻璃效果 */
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15); /* 柔和阴影 */
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 平滑过渡 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%); /* 柔和渐变背景 */
+            min-height: 100vh;
+            padding-top: 70px; /* 为固定导航栏留出空间 */
+            color: var(--dark);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 背景装饰元素 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 101, 132, 0.05) 0%, rgba(255, 255, 255, 0) 20%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 95%;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 90vh;
+        }
+
+        /* 导航栏样式 - 高级毛玻璃设计 */
+        .main-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.85); /* 毛玻璃效果 */
+            backdrop-filter: blur(16px); /* 毛玻璃模糊效果 */
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 1000;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .main-navbar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 18px;
+            transition: var(--transition);
+        }
+
+        .nav-brand:hover {
+            transform: translateX(5px);
+        }
+
+        .nav-brand i {
+            font-size: 24px;
+            transition: var(--transition);
+        }
+
+        .nav-brand:hover i {
+            transform: rotate(5deg);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--gray-medium);
+            padding: 10px 16px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 8px;
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: var(--transition);
+            border-radius: 2px;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+            height: 3px;
+        }
+
+        .nav-link.active::before {
+            opacity: 0.2;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .user-name {
+            font-size: 15px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .logout-btn:hover {
+            color: var(--primary);
+            background: rgba(108, 99, 255, 0.1);
+            transform: rotate(15deg);
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .nav-toggle span {
+            width: 22px;
+            height: 2px;
+            background: var(--primary);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* 内容区域样式 - 取消卡片设计 */
+        .content {
+            padding: 20px 0;
+            min-height: calc(100vh - 130px);
+            line-height: 1.6;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            background: var(--card-bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(108, 99, 255, 0.4);
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        /* 区域样式 - 取消卡片设计 */
+        .section {
+            background: var(--glass-bg);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+        }
+
+        /* 表单样式 - 与score.html一致 */
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+
+        /* 登录表单样式 */
+        .login-form {
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-filter);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: var(--shadow);
+            max-width: 400px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-form::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--accent), var(--primary), var(--accent));
+            z-index: -1;
+            border-radius: 22px;
+            background-size: 400%;
+            animation: borderAnimation 3s linear infinite;
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--light);
+            font-size: 24px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--light);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 15px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 16px;
+            transition: var(--transition);
+            color: var(--light);
+            backdrop-filter: var(--backdrop-filter);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* 按钮样式 - 与score.html一致 */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        .btn-success {
+            background: linear-gradient(90deg, var(--success), #5BC0BE);
+            color: white;
+            box-shadow: 0 4px 15px rgba(77, 177, 167, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(77, 177, 167, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(90deg, var(--warning), #FF9A3D);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 178, 66, 0.3);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 178, 66, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, var(--danger), #FF7B7B);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.6;
+        }
+
+        .error-message {
+            color: var(--danger);
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 500;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 69, 0, 0.1);
+            border: 1px solid var(--danger);
+        }
+
+        .success-message {
+            color: var(--success);
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 500;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(50, 205, 50, 0.1);
+            border: 1px solid var(--success);
+        }
+
+        /* 动画定义 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes borderAnimation {
+            0% { background-position: 0 0; }
+            100% { background-position: 400% 0; }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .login-form {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 导航栏 -->
+        <nav class="main-navbar" id="mainNavbar">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>智能教室管理系统</span>
+                </div>
+                
+                <div class="nav-menu" id="navMenu">
+                    <a href="main.html" class="nav-link"><i class="fas fa-home"></i> 控制台</a>
+                    <a href="score.html" class="nav-link"><i class="fas fa-coins"></i> 积分管理</a>
+                    <a href="rules.html" class="nav-link"><i class="fas fa-book"></i> 规则管理</a>
+                    <a href="random.html" class="nav-link"><i class="fas fa-random"></i> 随机抽号</a>
+                    <a href="homework.html" class="nav-link"><i class="fas fa-book-open"></i> 作业管理</a>
+                    <a href="clean.html" class="nav-link"><i class="fas fa-broom"></i> 卫生管理</a>
+                    <a href="settings.html" class="nav-link"><i class="fas fa-cog"></i> 系统设置</a>
+                    <a href="monitor.html" class="nav-link"><i class="fas fa-server"></i> 系统监控</a>
+                    <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> 数据大屏</a>
+                    <a href="lab.html" class="nav-link active"><i class="fas fa-flask"></i> 实验室</a>
+                </div>
+                
+                <div class="nav-user">
+                    <div class="user-avatar">A</div>
+                    <span class="user-name">管理员</span>
+                    <button class="logout-btn" title="退出登录"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+                
+                <div class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- 主内容区域 -->
+        <div class="content">
+            <div class="page-header">
+                <h2><i class="fas fa-flask"></i> 实验室访问验证</h2>
+                <button class="back-btn"><i class="fas fa-arrow-left"></i> 返回控制台</button>
+            </div>
+            
+            <div class="section" style="max-width: 400px; margin: 0 auto;">
+                <h3 class="section-header" style="text-align: center; justify-content: center;">请输入访问凭证</h3>
+                
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="username">账号</label>
+                    <input type="text" id="username" placeholder="请输入账号">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" placeholder="请输入密码">
+                </div>
+                
+                <button class="btn btn-primary" id="loginBtn" style="width: 100%; justify-content: center;">
+                    <i class="fas fa-sign-in-alt"></i> 验证并访问
+                </button>
+                
+                <div id="message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="LuminaUI/js/lumina.js"></script>
+    <script src="LuminaUI/js/notification.js"></script>
+    <script src="LuminaUI/js/i18n.js"></script>
+    <!-- 引入Dynamic Island样式 -->
+    <link rel="stylesheet" href="css/dynamic-island.css">
+    <script>
+        // 页面加载完成后初始化LuminaUI
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化LuminaUI组件（如果存在相应的初始化函数）
+            if (typeof initButtons !== 'undefined') {
+                initButtons();
+            }
+            
+            // 页面访问控制
+            protectPage();
+        });
+    </script>
+    
+    <!-- 引入页面切换动画管理器 -->
+    
+    </body>
+<!-- 引入Dynamic Island管理器 -->
+<script src="js/dynamic-island.js"></script>
+<script>
+    // 页面加载完成后，确保Dynamic Island显示问候语
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof dynamicIsland !== 'undefined') {
+            // 短暂延迟后显示时间，确保页面完全加载
+            setTimeout(() => {
+                dynamicIsland.updateTime();
+            }, 1000);
+        }
+    });
+</script>
+</html>

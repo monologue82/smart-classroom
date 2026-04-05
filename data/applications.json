@@ -1,0 +1,26 @@
+[
+  {
+    "id": "app_1758336911523_o1b4mv2ry",
+    "username": "monologue321",
+    "password": "201128",
+    "isAdmin": false,
+    "isApproved": false,
+    "appliedAt": "2025-09-20T02:55:11.523Z"
+  },
+  {
+    "id": "app_1758336922914_unyia0va9",
+    "username": "mono",
+    "password": "201128",
+    "isAdmin": false,
+    "isApproved": false,
+    "appliedAt": "2025-09-20T02:55:22.914Z"
+  },
+  {
+    "id": "app_1758461363646_0yawy52t8",
+    "username": "0444",
+    "password": "91789178",
+    "isAdmin": false,
+    "isApproved": false,
+    "appliedAt": "2025-09-21T13:29:23.646Z"
+  }
+]

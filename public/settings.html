@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能教室管理系统 - 设置</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入LuminaUI样式 -->
+    <link rel="stylesheet" href="LuminaUI/css/lumina.css">
+    <link rel="stylesheet" href="LuminaUI/css/buttons.css">
+    <!-- 引入确认选择器样式 -->
+    <link rel="stylesheet" href="css/confirm-selector.css">
+    <link rel="stylesheet" href="LuminaUI/css/notification.css">
+    <link rel="stylesheet" href="css/dynamic-island.css">
+    <!-- 引入页面切换动画样式 -->
+    
+    <style>
+        :root {
+            --primary: #6C63FF; /* 紫色系作为主要强调色，更显灵动 */
+            --secondary: #4A44A8;
+            --accent: #FF6584; /* 活力粉色 */
+            --light: #F8F9FF; /* 淡紫色背景 */
+            --dark: #2A2D3A; /* 深色文字 */
+            --success: #4DB1A7; /* 绿色 */
+            --warning: #FFB242; /* 橙色 */
+            --danger: #FF6B6B; /* 红色 */
+            --gray: #9599A8; /* 灰色文字 */
+            --gray-medium: #6C7284; /* 中等灰色 */
+            --card-bg: rgba(255, 255, 255, 0.75); /* 高透明度毛玻璃效果 */
+            --glass-bg: rgba(255, 255, 255, 0.75); /* 毛玻璃效果 */
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15); /* 柔和阴影 */
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 平滑过渡 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%); /* 柔和渐变背景 */
+            min-height: 100vh;
+            padding-top: 70px; /* 为固定导航栏留出空间 */
+            color: var(--dark);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 背景装饰元素 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 101, 132, 0.05) 0%, rgba(255, 255, 255, 0) 20%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 95%;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 90vh;
+        }
+
+        /* 导航栏样式 - 高级毛玻璃设计 */
+        .main-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.85); /* 毛玻璃效果 */
+            backdrop-filter: blur(16px); /* 毛玻璃模糊效果 */
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 1000;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .main-navbar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 18px;
+            transition: var(--transition);
+        }
+
+        .nav-brand:hover {
+            transform: translateX(5px);
+        }
+
+        .nav-brand i {
+            font-size: 24px;
+            transition: var(--transition);
+        }
+
+        .nav-brand:hover i {
+            transform: rotate(5deg);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--gray-medium);
+            padding: 10px 16px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 8px;
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: var(--transition);
+            border-radius: 2px;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+            height: 3px;
+        }
+
+        .nav-link.active::before {
+            opacity: 0.2;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .user-name {
+            font-size: 15px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .logout-btn:hover {
+            color: var(--primary);
+            background: rgba(108, 99, 255, 0.1);
+            transform: rotate(15deg);
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .nav-toggle span {
+            width: 22px;
+            height: 2px;
+            background: var(--primary);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* 内容区域样式 - 取消卡片设计 */
+        .content {
+            padding: 20px 0;
+            min-height: calc(100vh - 130px);
+            line-height: 1.6;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            background: var(--card-bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(108, 99, 255, 0.4);
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        /* 区域样式 - 取消卡片设计 */
+        .section {
+            background: var(--glass-bg);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            line-height: 1.5;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        th {
+            background: rgba(108, 99, 255, 0.1);
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        tr:hover {
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        .btn-success {
+            background: linear-gradient(90deg, var(--success), #5BC0BE);
+            color: white;
+            box-shadow: 0 4px 15px rgba(77, 177, 167, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(77, 177, 167, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(90deg, var(--warning), #FF9A3D);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 178, 66, 0.3);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 178, 66, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, var(--danger), #FF7B7B);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        /* 统一按钮动画效果 */
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: translateY(-1px) scale(0.98) !important;
+            transition: transform 0.1s ease;
+        }
+
+        /* 所有按钮的统一悬停效果 */
+        .btn-primary,
+        .btn-success,
+        .btn-warning,
+        .btn-danger,
+        .btn-secondary,
+        .btn-info {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+
+        /* 按钮涟漪效果 */
+        .ripple-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .ripple-effect:active::after {
+            animation: ripple 0.6s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(50, 50);
+                opacity: 0;
+            }
+        }
+
+        /* 页脚样式 - 通透清爽风格 */
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--gray); /* 三级文字色 */
+            font-size: 14px; /* 按照设计要求 */
+            background: rgba(255, 255, 255, 0.5); /* 毛玻璃效果 */
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer a {
+            color: var(--gray-medium); /* 二级文字色 */
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .footer a:hover {
+            color: var(--primary); /* 悬停时使用强调色 */
+            transform: translateX(3px);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 130px; /* 移动端需要更多顶部空间 */
+            }
+
+            .content {
+                padding: 25px;
+            }
+
+            .nav-container {
+                padding: 0 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .page-header h2 {
+                font-size: 24px;
+            }
+
+            .back-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            .btn {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 导航栏 -->
+        <nav class="main-navbar" id="mainNavbar">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>智能教室管理系统</span>
+                </div>
+                
+                <div class="nav-menu" id="navMenu">
+                    <a href="main.html" class="nav-link"><i class="fas fa-home"></i> 控制台</a>
+                    <a href="score.html" class="nav-link"><i class="fas fa-coins"></i> 积分管理</a>
+                    <a href="rules.html" class="nav-link"><i class="fas fa-book"></i> 规则管理</a>
+                    <a href="random.html" class="nav-link"><i class="fas fa-random"></i> 随机抽号</a>
+                    <a href="homework.html" class="nav-link"><i class="fas fa-book-open"></i> 作业管理</a>
+                    <a href="clean.html" class="nav-link"><i class="fas fa-broom"></i> 卫生管理</a>
+                    <a href="settings.html" class="nav-link active"><i class="fas fa-cog"></i> 系统设置</a>
+                    <a href="monitor.html" class="nav-link"><i class="fas fa-server"></i> 系统监控</a>
+                    <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> 数据大屏</a>
+                    <a href="lab.html" class="nav-link"><i class="fas fa-flask"></i> 实验室</a>
+                </div>
+                
+                <div class="nav-user">
+                    <div class="user-avatar">A</div>
+                    <span class="user-name">管理员</span>
+                    <button class="logout-btn" title="退出登录"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+                
+                <div class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- 主内容区域 -->
+        <div class="content">
+            <div class="page-header">
+                <h2><i class="fas fa-cog"></i> 系统设置</h2>
+                <button class="back-btn"><i class="fas fa-arrow-left"></i> 返回控制台</button>
+            </div>
+            
+            <div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
+                <!-- 密码修改 -->
+                <div class="section">
+                    <h3 class="section-header"><i class="fas fa-key"></i> 修改密码</h3>
+                    <div class="form-group">
+                        <label for="currentPassword"><i class="fas fa-lock"></i> 当前密码</label>
+                        <input type="password" id="currentPassword" placeholder="输入当前密码">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword"><i class="fas fa-key"></i> 新密码</label>
+                        <input type="password" id="newPassword" placeholder="输入新密码（至少6位）">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmNewPassword"><i class="fas fa-check-circle"></i> 确认新密码</label>
+                        <input type="password" id="confirmNewPassword" placeholder="再次输入新密码">
+                    </div>
+                    <button id="changePasswordBtn" class="btn btn-warning"><i class="fas fa-key"></i> 修改密码</button>
+                </div>
+                
+                <!-- 数据备份 -->
+                <div class="section">
+                    <h3 class="section-header"><i class="fas fa-download"></i> 数据备份</h3>
+                    <div class="form-group">
+                        <label for="backupName"><i class="fas fa-file-alt"></i> 备份名称</label>
+                        <input type="text" id="backupName" placeholder="输入备份名称（可选）">
+                    </div>
+                    <button id="backupSystemBtn" class="btn btn-success"><i class="fas fa-download"></i> 备份整个系统</button>
+                    <div style="margin-top: 15px;">
+                        <p style="margin-bottom: 10px;">备份说明：</p>
+                        <ul style="margin-left: 20px; margin-bottom: 10px; font-size: 14px;">
+                            <li>备份包含所有学生数据</li>
+                            <li>备份包含所有积分记录</li>
+                            <li>备份包含所有规则设置</li>
+                            <li>备份包含所有作业信息</li>
+                            <li>备份包含系统操作日志</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>智能教室管理系统</p>
+            <span>•</span>
+            <a href="LuminaUI/index.html" target="_blank">
+                <span>Powered by LuminaUI</span>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // 本地存储键名
+        const STORAGE_KEYS = {
+            adminInfo: 'admin_info',
+            users: 'users'
+        };
+
+        // 导航栏交互脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            const navToggle = document.getElementById('navToggle');
+            const navMenu = document.getElementById('navMenu');
+            
+            // 移动端菜单切换
+            navToggle && navToggle.addEventListener('click', function() {
+                navMenu && navMenu.classList.toggle('active');
+                
+                // 汉堡菜单动画
+                const spans = navToggle.querySelectorAll('span');
+                if (navMenu && navMenu.classList.contains('active')) {
+                    spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                    spans[1].style.opacity = '0';
+                    spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+                } else {
+                    spans[0].style.transform = 'none';
+                    spans[1].style.opacity = '1';
+                    spans[2].style.transform = 'none';
+                }
+            });
+            
+            // 滚动时导航栏样式变化
+            window.addEventListener('scroll', function() {
+                const navbar = document.getElementById('mainNavbar');
+                if (navbar) {
+                    if (window.scrollY > 100) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                }
+            });
+            
+            // 设置当前页面的导航链接为活跃状态
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const linkPath = link.getAttribute('href');
+                if (linkPath === currentPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            // 加载管理员信息
+            loadAdminInfo();
+            
+            // 更新管理员信息按钮事件
+            document.getElementById('updateAdminBtn').addEventListener('click', updateAdminInfo);
+            
+            // 修改密码按钮事件
+            document.getElementById('changePasswordBtn').addEventListener('click', changePassword);
+            
+            // 备份数据按钮事件
+            document.getElementById('backupBtn').addEventListener('click', backupData);
+            
+            // 恢复数据按钮事件
+            document.getElementById('restoreBtn').addEventListener('click', restoreData);
+            
+            // 清空数据按钮事件
+            document.getElementById('clearBtn').addEventListener('click', clearData);
+            
+            // 导航栏返回按钮
+            document.querySelector('.back-btn').addEventListener('click', () => {
+                window.location.href = 'main.html';
+            });
+            
+            // 登出按钮功能
+            const logoutBtn = document.querySelector('.logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    // 清除认证会话
+                    if (typeof authManager !== 'undefined') {
+                        authManager.clearSession();
+                    }
+                    if (typeof showAlert !== 'undefined') {
+            showAlert('您已成功登出系统', 'success');
+        } else {
+            alert('您已成功登出系统');
+        }
+                });
+            }
+        });
+
+        // 加载管理员信息
+        function loadAdminInfo() {
+            try {
+                const adminInfo = JSON.parse(localStorage.getItem(STORAGE_KEYS.adminInfo) || '{}');
+                
+                if (adminInfo.name) {
+                    document.getElementById('adminName').value = adminInfo.name;
+                }
+                
+                if (adminInfo.email) {
+                    document.getElementById('adminEmail').value = adminInfo.email;
+                }
+            } catch (error) {
+                console.error('加载管理员信息失败:', error);
+            }
+        }
+
+        // 更新管理员信息
+        function updateAdminInfo() {
+            const name = document.getElementById('adminName').value;
+            const email = document.getElementById('adminEmail').value;
+            
+            if (typeof showAlert !== 'undefined') {
+                showAlert('请输入管理员姓名', 'error');
+            } else {
+                alert('请输入管理员姓名');
+            }
+            
+            if (typeof showAlert !== 'undefined') {
+                showAlert('请输入邮箱地址', 'error');
+            } else {
+                alert('请输入邮箱地址');
+            }
+            
+            if (!isValidEmail(email)) {
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('请输入有效的邮箱地址');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('请输入有效的邮箱地址', 'error');
+} else {
+    alert('请输入有效的邮箱地址');
+}
+                }
+                return;
+            }
+            
+            try {
+                const adminInfo = {
+                    name: name,
+                    email: email,
+                    updateTime: new Date().toISOString()
+                };
+                
+                localStorage.setItem(STORAGE_KEYS.adminInfo, JSON.stringify(adminInfo));
+                
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.success('管理员信息更新成功');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('管理员信息更新成功', 'success');
+} else {
+    alert('管理员信息更新成功');
+}
+                }
+            } catch (error) {
+                console.error('更新管理员信息失败:', error);
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('更新管理员信息失败，请重试');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('更新管理员信息失败，请重试', 'error');
+} else {
+    alert('更新管理员信息失败，请重试');
+}
+                }
+            }
+        }
+
+        // 修改密码
+        function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (!currentPassword) {
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('请输入当前密码');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('请输入当前密码', 'error');
+} else {
+    alert('请输入当前密码');
+}
+                }
+                return;
+            }
+            
+            if (!newPassword) {
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('请输入新密码');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('请输入新密码', 'error');
+} else {
+    alert('请输入新密码');
+}
+                }
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('新密码长度至少为6位');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('新密码长度至少为6位', 'error');
+} else {
+    alert('新密码长度至少为6位');
+}
+                }
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('两次输入的密码不一致');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('两次输入的密码不一致', 'error');
+} else {
+    alert('两次输入的密码不一致');
+}
+                }
+                return;
+            }
+            
+            try {
+                const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || '[]');
+                
+                // 查找当前用户
+                const currentUserIndex = users.findIndex(user => user.username === 'admin');
+                
+                if (currentUserIndex === -1) {
+                    if (typeof dynamicIsland !== 'undefined') {
+                        dynamicIsland.error('未找到管理员账户');
+                    } else {
+                        if (typeof showAlert !== 'undefined') {
+    showAlert('未找到管理员账户', 'error');
+} else {
+    alert('未找到管理员账户');
+}
+                    }
+                    return;
+                }
+                
+                // 验证当前密码
+                if (users[currentUserIndex].password !== currentPassword) {
+                    if (typeof dynamicIsland !== 'undefined') {
+                        dynamicIsland.error('当前密码不正确');
+                    } else {
+                        if (typeof showAlert !== 'undefined') {
+    showAlert('当前密码不正确', 'error');
+} else {
+    alert('当前密码不正确');
+}
+                    }
+                    return;
+                }
+                
+                // 更新密码
+                users[currentUserIndex].password = newPassword;
+                
+                localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
+                
+                // 清空密码输入框
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.success('密码修改成功');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('密码修改成功', 'success');
+} else {
+    alert('密码修改成功');
+}
+                }
+            } catch (error) {
+                console.error('密码修改失败:', error);
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('密码修改失败，请重试');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('密码修改失败，请重试', 'error');
+} else {
+    alert('密码修改失败，请重试');
+}
+                }
+            }
+        }
+
+        // 验证邮箱格式
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+    <script>
+        // 本地存储键名
+        const STORAGE_KEYS = {
+            students: 'students',
+            homework: 'homework',
+            classRules: 'class_rules',
+            operations: 'operations',
+            users: 'users',
+            systemLogs: 'system_logs'
+        };
+
+        // 导航栏交互脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            const navToggle = document.getElementById('navToggle');
+            const navMenu = document.getElementById('navMenu');
+            
+            // 移动端菜单切换
+            navToggle && navToggle.addEventListener('click', function() {
+                navMenu && navMenu.classList.toggle('active');
+                
+                // 汉堡菜单动画
+                const spans = navToggle.querySelectorAll('span');
+                if (navMenu && navMenu.classList.contains('active')) {
+                    spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                    spans[1].style.opacity = '0';
+                    spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+                } else {
+                    spans[0].style.transform = 'none';
+                    spans[1].style.opacity = '1';
+                    spans[2].style.transform = 'none';
+                }
+            });
+            
+            // 滚动时导航栏样式变化
+            window.addEventListener('scroll', function() {
+                const navbar = document.getElementById('mainNavbar');
+                if (navbar) {
+                    if (window.scrollY > 100) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                }
+            });
+            
+            // 设置当前页面的导航链接为活跃状态
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const linkPath = link.getAttribute('href');
+                if (linkPath === currentPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            // 修改密码按钮事件
+            document.getElementById('changePasswordBtn').addEventListener('click', changePassword);
+            
+            // 备份系统按钮事件
+            document.getElementById('backupSystemBtn').addEventListener('click', backupSystem);
+            
+            // 导航栏返回按钮
+            document.querySelector('.back-btn').addEventListener('click', () => {
+                window.location.href = 'main.html';
+            });
+            
+            // 登出按钮功能
+            const logoutBtn = document.querySelector('.logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    // 清除认证会话
+                    if (typeof authManager !== 'undefined') {
+                        authManager.clearSession();
+                    }
+                    if (typeof showAlert !== 'undefined') {
+                        showAlert('您已成功登出系统', 'success');
+                    } else {
+                        alert('您已成功登出系统');
+                    }
+                });
+            }
+        });
+
+        // 修改密码
+        async function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+            
+            if (!currentPassword) {
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('请输入当前密码');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+                        showAlert('请输入当前密码', 'error');
+                    } else {
+                        alert('请输入当前密码');
+                    }
+                }
+                return;
+            }
+            
+            if (!newPassword) {
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('请输入新密码');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+                        showAlert('请输入新密码', 'error');
+                    } else {
+                        alert('请输入新密码');
+                    }
+                }
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('新密码长度至少为6位');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+                        showAlert('新密码长度至少为6位', 'error');
+                    } else {
+                        alert('新密码长度至少为6位');
+                    }
+                }
+                return;
+            }
+            
+            if (newPassword !== confirmNewPassword) {
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('两次输入的密码不一致');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+                        showAlert('两次输入的密码不一致', 'error');
+                    } else {
+                        alert('两次输入的密码不一致');
+                    }
+                }
+                return;
+            }
+            
+            try {
+                // 这里假设是本地存储模式
+                if (typeof isLocalFile !== 'undefined' && isLocalFile) {
+                    // 本地存储模式 - 直接操作localStorage
+                    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || '[]');
+                    
+                    // 查找管理员用户（假设用户名为'admin'）
+                    const adminUserIndex = users.findIndex(user => user.username === 'admin');
+                    
+                    if (adminUserIndex === -1) {
+                        // 如果没有找到admin用户，尝试找到任意一个管理员
+                        const adminUser = users.find(user => user.isAdmin);
+                        if (!adminUser) {
+                            if (typeof dynamicIsland !== 'undefined') {
+                                dynamicIsland.error('未找到管理员账户');
+                            } else {
+                                if (typeof showAlert !== 'undefined') {
+                                    showAlert('未找到管理员账户', 'error');
+                                } else {
+                                    alert('未找到管理员账户');
+                                }
+                            }
+                            return;
+                        }
+                        
+                        // 验证当前密码
+                        if (adminUser.password !== currentPassword) {
+                            if (typeof dynamicIsland !== 'undefined') {
+                                dynamicIsland.error('当前密码不正确');
+                            } else {
+                                if (typeof showAlert !== 'undefined') {
+                                    showAlert('当前密码不正确', 'error');
+                                } else {
+                                    alert('当前密码不正确');
+                                }
+                            }
+                            return;
+                        }
+                        
+                        // 更新密码
+                        adminUser.password = newPassword;
+                    } else {
+                        // 验证当前密码
+                        if (users[adminUserIndex].password !== currentPassword) {
+                            if (typeof dynamicIsland !== 'undefined') {
+                                dynamicIsland.error('当前密码不正确');
+                            } else {
+                                if (typeof showAlert !== 'undefined') {
+                                    showAlert('当前密码不正确', 'error');
+                                } else {
+                                    alert('当前密码不正确');
+                                }
+                            }
+                            return;
+                        }
+                        
+                        // 更新密码
+                        users[adminUserIndex].password = newPassword;
+                    }
+                    
+                    localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
+                    
+                    // 清空密码输入框
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmNewPassword').value = '';
+                    
+                    if (typeof dynamicIsland !== 'undefined') {
+                        dynamicIsland.success('密码修改成功');
+                    } else {
+                        if (typeof showAlert !== 'undefined') {
+                            showAlert('密码修改成功', 'success');
+                        } else {
+                            alert('密码修改成功');
+                        }
+                    }
+                } else {
+                    // 服务器模式 - 调用API
+                    const response = await fetch('/api/admin/password', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            currentPassword: currentPassword,
+                            newPassword: newPassword
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        // 清空密码输入框
+                        document.getElementById('currentPassword').value = '';
+                        document.getElementById('newPassword').value = '';
+                        document.getElementById('confirmNewPassword').value = '';
+                        
+                        if (typeof dynamicIsland !== 'undefined') {
+                            dynamicIsland.success(result.message || '密码修改成功');
+                        } else {
+                            if (typeof showAlert !== 'undefined') {
+                                showAlert(result.message || '密码修改成功', 'success');
+                            } else {
+                                alert(result.message || '密码修改成功');
+                            }
+                        }
+                    } else {
+                        if (typeof dynamicIsland !== 'undefined') {
+                            dynamicIsland.error(result.message || '密码修改失败');
+                        } else {
+                            if (typeof showAlert !== 'undefined') {
+                                showAlert(result.message || '密码修改失败', 'error');
+                            } else {
+                                alert(result.message || '密码修改失败');
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('密码修改失败:', error);
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('密码修改失败，请重试');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+                        showAlert('密码修改失败，请重试', 'error');
+                    } else {
+                        alert('密码修改失败，请重试');
+                    }
+                }
+            }
+        }
+
+        // 备份整个系统
+        async function backupSystem() {
+            const backupName = document.getElementById('backupName').value.trim() || 'system_backup';
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const filename = `smart-classroom_${backupName}_${timestamp}.json`;
+            
+            try {
+                if (typeof isLocalFile !== 'undefined' && isLocalFile) {
+                    // 本地存储模式 - 从localStorage获取所有数据
+                    const backupData = {
+                        students: JSON.parse(localStorage.getItem(STORAGE_KEYS.students) || '[]'),
+                        homework: JSON.parse(localStorage.getItem(STORAGE_KEYS.homework) || '[]'),
+                        class_rules: JSON.parse(localStorage.getItem(STORAGE_KEYS.classRules) || '[]'),
+                        operations: JSON.parse(localStorage.getItem(STORAGE_KEYS.operations) || '[]'),
+                        users: JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || '[]'),
+                        system_logs: JSON.parse(localStorage.getItem(STORAGE_KEYS.systemLogs) || '[]'),
+                        backup_timestamp: new Date().toISOString(),
+                        backup_version: '4.0'
+                    };
+                    
+                    const dataStr = JSON.stringify(backupData, null, 2);
+                    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                    const url = URL.createObjectURL(dataBlob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    
+                    if (typeof dynamicIsland !== 'undefined') {
+                        dynamicIsland.success('系统数据备份成功');
+                    } else {
+                        if (typeof showAlert !== 'undefined') {
+                            showAlert('系统数据备份成功', 'success');
+                        } else {
+                            alert('系统数据备份成功');
+                        }
+                    }
+                } else {
+                    // 服务器模式 - 调用API
+                    const response = await fetch('/api/export', {
+                        method: 'GET'
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        const dataStr = JSON.stringify(data, null, 2);
+                        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                        const url = URL.createObjectURL(dataBlob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(url);
+                        
+                        if (typeof dynamicIsland !== 'undefined') {
+                            dynamicIsland.success('系统数据备份成功');
+                        } else {
+                            if (typeof showAlert !== 'undefined') {
+                                showAlert('系统数据备份成功', 'success');
+                            } else {
+                                alert('系统数据备份成功');
+                            }
+                        }
+                    } else {
+                        if (typeof dynamicIsland !== 'undefined') {
+                            dynamicIsland.error('系统数据备份失败');
+                        } else {
+                            if (typeof showAlert !== 'undefined') {
+                                showAlert('系统数据备份失败', 'error');
+                            } else {
+                                alert('系统数据备份失败');
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('备份数据失败:', error);
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('备份数据失败，请重试');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+                        showAlert('备份数据失败，请重试', 'error');
+                    } else {
+                        alert('备份数据失败，请重试');
+                    }
+                }
+            }
+        }
+        }
+        </script>
+    
+    <!-- 引入页面切换动画管理器 -->
+    
+</body>
+<!-- 引入Dynamic Island管理器 -->
+<script src="js/dynamic-island.js"></script>
+<script>
+    // 页面加载完成后，确保Dynamic Island显示问候语
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof dynamicIsland !== 'undefined') {
+            // 短暂延迟后显示时间，确保页面完全加载
+            setTimeout(() => {
+                dynamicIsland.updateTime();
+            }, 1000);
+        }
+    });
+</script>
+</html>
+
+</content>

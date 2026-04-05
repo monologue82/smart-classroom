@@ -1,0 +1,160 @@
+/* 选择器组件样式 */
+
+/* 毛玻璃遮罩 */
+.confirm-selector-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.confirm-selector-overlay.show {
+    opacity: 1;
+}
+
+/* 选择器对话框 */
+.confirm-selector-dialog {
+    position: relative;
+    min-width: 300px;
+    max-width: 90vw;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    z-index: 9999;
+    transform: scale(0.8);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.confirm-selector-overlay.show .confirm-selector-dialog {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* 选择器标题 */
+.confirm-selector-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* 选择器内容 */
+.confirm-selector-content {
+    color: white;
+    margin-bottom: 20px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* 选择器按钮组 */
+.confirm-selector-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+/* 选择器按钮 */
+.confirm-selector-btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: white;
+    font-size: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+.confirm-selector-btn:active {
+    transform: scale(0.95);
+}
+
+/* 确认按钮样式 */
+.confirm-selector-btn.confirm {
+    background: rgba(46, 204, 113, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.confirm-selector-btn.confirm:hover {
+    background: rgba(46, 204, 113, 0.7);
+}
+
+/* 取消按钮样式 */
+.confirm-selector-btn.cancel {
+    background: rgba(231, 76, 60, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.confirm-selector-btn.cancel:hover {
+    background: rgba(231, 76, 60, 0.7);
+}
+
+/* 灵动岛边缘流光效果 */
+.confirm-selector-dialog::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(90deg, transparent, var(--glow-color, rgba(108, 99, 255, 0.8)), transparent);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    animation: glowMove 2s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* 流光动画 */
+@keyframes glowMove {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+    .confirm-selector-dialog {
+        margin: 20px;
+        padding: 20px;
+    }
+    
+    .confirm-selector-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .confirm-selector-btn {
+        min-width: auto;
+    }
+}

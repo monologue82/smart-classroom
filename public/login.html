@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能教室管理系统 - 登录</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入LuminaUI样式 -->
+    <link rel="stylesheet" href="LuminaUI/css/lumina.css">
+    <link rel="stylesheet" href="LuminaUI/css/buttons.css">
+    <!-- 引入页面切换动画样式 -->
+    
+    <style>
+        :root {
+            --primary: #6C63FF; /* 紫色系作为主要强调色，更显灵动 */
+            --secondary: #4A44A8;
+            --accent: #FF6584; /* 活力粉色 */
+            --light: #F8F9FF; /* 淡紫色背景 */
+            --dark: #2A2D3A; /* 深色文字 */
+            --success: #4DB1A7; /* 绿色 */
+            --warning: #FFB242; /* 橙色 */
+            --danger: #FF6B6B; /* 红色 */
+            --gray: #9599A8; /* 灰色文字 */
+            --gray-medium: #6C7284; /* 中等灰色 */
+            --card-bg: rgba(255, 255, 255, 0.75); /* 高透明度毛玻璃效果 */
+            --glass-bg: rgba(255, 255, 255, 0.75); /* 毛玻璃效果 */
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15); /* 柔和阴影 */
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 平滑过渡 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* 加载指示器样式 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .loading-spinner-dot {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .loading-spinner-dot::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: orbit 2s infinite linear;
+        }
+
+        .loading-spinner-dot:nth-child(1) { animation-delay: 0s; }
+        .loading-spinner-dot:nth-child(1)::before { animation-delay: 0s; }
+
+        .loading-spinner-dot:nth-child(2) { animation-delay: -0.5s; }
+        .loading-spinner-dot:nth-child(2)::before { animation-delay: -0.5s; }
+
+        .loading-spinner-dot:nth-child(3) { animation-delay: -1s; }
+        .loading-spinner-dot:nth-child(3)::before { animation-delay: -1s; }
+
+        .loading-spinner-dot:nth-child(4) { animation-delay: -1.5s; }
+        .loading-spinner-dot:nth-child(4)::before { animation-delay: -1.5s; }
+
+        .loading-text {
+            color: white;
+            font-size: 20px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-align: center;
+            animation: fadeInOut 1.5s infinite ease-in-out;
+        }
+
+        .loading-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .loading-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: white;
+            border-radius: 2px;
+            animation: progress 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+
+        @keyframes orbit {
+            0% { transform: translateX(-50%) rotate(0deg) translateX(30px) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg) translateX(30px) rotate(-360deg); }
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%); /* 柔和渐变背景 */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 背景装饰元素 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 101, 132, 0.05) 0%, rgba(255, 255, 255, 0) 20%);
+            z-index: -1;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            background: var(--glass-bg); /* 毛玻璃效果 */
+            backdrop-filter: blur(12px); /* 毛玻璃模糊效果 */
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--glass-border);
+        }
+
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 30px 25px;
+            text-align: center;
+            color: var(--dark-color);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            margin-bottom: 10px;
+            animation: fadeInDown 0.8s ease-out;
+            color: var(--primary-color);
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+            color: var(--text-light);
+        }
+
+        .icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+            animation: bounceIn 1s ease-out 0.3s both;
+            display: inline-block;
+            color: var(--primary-color);
+        }
+
+        .form-container {
+            padding: 25px;
+            position: relative;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .form-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .form-container::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.03);
+            border-radius: 4px;
+        }
+
+        .form-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--primary), var(--secondary));
+            border-radius: 4px;
+        }
+
+        .form-container::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+            animation: formAppear 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.4s; }
+        .form-group:nth-child(2) { animation-delay: 0.5s; }
+        .form-group:nth-child(3) { animation-delay: 0.6s; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+        }
+
+        .form-group label i {
+            margin-right: 10px;
+            width: 22px;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 14px 14px 45px;
+            border-radius: 12px;
+            border: 2px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.8);
+            font-size: 15px;
+            transition: var(--transition);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        input:focus ~ .input-icon {
+            color: var(--primary);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        /* 使用LuminaUI按钮样式，只添加特定的自定义样式 */
+        .btn {
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        .btn i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 18px rgba(108, 99, 255, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 3px 8px rgba(108, 99, 255, 0.4);
+        }
+        
+        .btn:after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.15);
+            transform: rotate(30deg);
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .btn:hover:after {
+            transform: rotate(30deg) translate(20%, 20%);
+        }
+        
+        .switch-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 15px;
+            color: var(--dark);
+            padding-bottom: 10px;
+        }
+        
+        .switch-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .switch-link a:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+        
+        .switch-link a:hover {
+            color: var(--secondary);
+        }
+        
+        .switch-link a:hover:after {
+            width: 100%;
+        }
+        
+        .error-message {
+            color: var(--danger);
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .input-error {
+            border-color: var(--danger) !important;
+        }
+        
+        .input-error ~ .input-icon {
+            color: var(--danger) !important;
+        }
+        
+        .dev-link {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .dev-link:hover {
+            color: white;
+            text-decoration: underline;
+        }
+        
+        .application-status {
+            background-color: #e3f2fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .application-status h3 {
+            margin-bottom: 10px;
+            color: #0d47a1;
+            display: flex;
+            align-items: center;
+        }
+        
+        .application-status h3 i {
+            margin-right: 10px;
+        }
+        
+        .status-pending {
+            color: #ff9800;
+        }
+        
+        .status-approved {
+            color: #4caf50;
+        }
+        
+        .status-rejected {
+            color: #f44336;
+        }
+        
+        .application-details {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .application-details div {
+            margin-bottom: 5px;
+        }
+        
+        @keyframes slideIn {
+            0% { 
+                opacity: 0; 
+                transform: translateY(50px) scale(0.9);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes fadeInDown {
+            0% { 
+                opacity: 0; 
+                transform: translateY(-20px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            0% { 
+                opacity: 0; 
+                transform: translateY(20px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounceIn {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.5);
+            }
+            70% { 
+                opacity: 1; 
+                transform: scale(1.1);
+            }
+            100% { 
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes formAppear {
+            0% { 
+                opacity: 0; 
+                transform: translateY(30px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes shimmer {
+            0% { transform: rotate(30deg) translate(-50%, -50%); }
+            100% { transform: rotate(30deg) translate(50%, 50%); }
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(108, 99, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(108, 99, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(108, 99, 255, 0); }
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, 40px) rotate(90deg); }
+            50% { transform: translate(40px, 0) rotate(180deg); }
+            75% { transform: translate(20px, -40px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+        
+        .system-info {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #666;
+            padding: 10px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 10px;
+        }
+        .custom-footer {
+            position: fixed;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .custom-footer img {
+            height: 20px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载指示器 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="loading-spinner-dot"></div>
+            <div class="loading-spinner-dot"></div>
+            <div class="loading-spinner-dot"></div>
+            <div class="loading-spinner-dot"></div>
+        </div>
+        <div class="loading-text">正在加载资源中...</div>
+        <div class="loading-progress">
+            <div class="loading-progress-bar"></div>
+        </div>
+    </div>
+    
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+    
+    <div class="container" id="loginContainer">
+        <div class="header">
+            <i class="fas fa-graduation-cap icon"></i>
+            <h1>智能教室管理系统</h1>
+        </div>
+        
+        <div class="form-container">
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user"></i> 用户账号</label>
+                <div class="input-container">
+                    <input type="text" id="username" placeholder="请输入您的账号">
+                    <div class="input-icon"><i class="fas fa-user"></i></div>
+                </div>
+                <div class="error-message" id="username-error">请输入有效的用户名</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> 密码</label>
+                <div class="input-container">
+                    <input type="password" id="password" placeholder="请输入密码">
+                    <div class="input-icon"><i class="fas fa-key"></i></div>
+                    <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                </div>
+                <div class="error-message" id="password-error">请输入密码</div>
+            </div>
+            
+            <button class="btn primary" id="login-btn">
+                <i class="fas fa-sign-in-alt"></i> 登录系统
+            </button>
+            
+            <div class="switch-link">
+                还没有账户？ <a href="#" id="showRegister">注册新用户</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container" id="registerContainer" style="display: none;">
+        <div class="header">
+            <i class="fas fa-user-plus icon"></i>
+            <h1>创建新账户</h1>
+            <p>加入智能教室管理系统</p>
+        </div>
+        
+        <div class="form-container">
+            <div class="form-group">
+                <label for="reg-username"><i class="fas fa-user"></i> 用户账号</label>
+                <div class="input-container">
+                    <input type="text" id="reg-username" placeholder="设置您的账号">
+                    <div class="input-icon"><i class="fas fa-user"></i></div>
+                </div>
+                <div class="error-message" id="reg-username-error">请输入有效的用户名（3-20个字符）</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-password"><i class="fas fa-lock"></i> 设置密码</label>
+                <div class="input-container">
+                    <input type="password" id="reg-password" placeholder="设置安全密码">
+                    <div class="input-icon"><i class="fas fa-key"></i></div>
+                    <i class="fas fa-eye password-toggle" id="reg-togglePassword"></i>
+                </div>
+                <div class="error-message" id="reg-password-error">密码长度至少为6个字符</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="reg-confirm-password"><i class="fas fa-check-circle"></i> 确认密码</label>
+                <div class="input-container">
+                    <input type="password" id="reg-confirm-password" placeholder="再次输入密码">
+                    <div class="input-icon"><i class="fas fa-redo"></i></div>
+                </div>
+                <div class="error-message" id="reg-confirm-error">两次输入的密码不一致</div>
+            </div>
+            
+            <button class="btn primary" id="register-btn">
+                <i class="fas fa-user-plus"></i> 立即注册
+            </button>
+            
+            <div class="switch-link">
+                已有账户？ <a href="#" id="showLogin">返回登录</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="custom-footer">
+        <span>AuroraNova</span>
+        <span>•</span>
+        <span>Powered by LuminaUI</span>
+    </div>
+    <!-- 引入Dynamic Island样式 -->
+    <link rel="stylesheet" href="css/dynamic-island.css">
+    <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 引入页面切换动画管理器 -->
+    
+</body>
+<!-- 引入Dynamic Island管理器 -->
+<script src="js/dynamic-island.js"></script>
+<script>
+    // 页面加载完成后，确保Dynamic Island显示问候语
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof dynamicIsland !== 'undefined') {
+            // 短暂延迟后显示时间，确保页面完全加载
+            setTimeout(() => {
+                dynamicIsland.updateTime();
+            }, 1000);
+        }
+    });
+</script>
+<!-- 引入登录JavaScript文件 -->
+<script src="js/login.js"></script>
+</html>

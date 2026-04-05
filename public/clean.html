@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能教室管理系统 - 卫生</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入LuminaUI样式 -->
+    <link rel="stylesheet" href="LuminaUI/css/lumina.css">
+    <link rel="stylesheet" href="LuminaUI/css/buttons.css">
+    <!-- 引入确认选择器样式 -->
+    <link rel="stylesheet" href="css/confirm-selector.css">
+    <link rel="stylesheet" href="LuminaUI/css/notification.css">
+    <link rel="stylesheet" href="css/dynamic-island.css">
+    <style>
+        :root {
+            --primary: #6C63FF; /* 紫色系作为主要强调色，更显灵动 */
+            --secondary: #4A44A8;
+            --accent: #FF6584; /* 活力粉色 */
+            --light: #F8F9FF; /* 淡紫色背景 */
+            --dark: #2A2D3A; /* 深色文字 */
+            --success: #4DB1A7; /* 绿色 */
+            --warning: #FFB242; /* 橙色 */
+            --danger: #FF6B6B; /* 红色 */
+            --gray: #9599A8; /* 灰色文字 */
+            --gray-medium: #6C7284; /* 中等灰色 */
+            --card-bg: rgba(255, 255, 255, 0.75); /* 高透明度毛玻璃效果 */
+            --glass-bg: rgba(255, 255, 255, 0.75); /* 毛玻璃效果 */
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15); /* 柔和阴影 */
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 平滑过渡 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%); /* 柔和渐变背景 */
+            min-height: 100vh;
+            padding-top: 70px; /* 为固定导航栏留出空间 */
+            color: var(--dark);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 背景装饰元素 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 101, 132, 0.05) 0%, rgba(255, 255, 255, 0) 20%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 95%;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 90vh;
+        }
+
+        /* 导航栏样式 - 高级毛玻璃设计 */
+        .main-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.85); /* 毛玻璃效果 */
+            backdrop-filter: blur(16px); /* 毛玻璃模糊效果 */
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 1000;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .main-navbar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 18px;
+            transition: var(--transition);
+        }
+
+        .nav-brand:hover {
+            transform: translateX(5px);
+        }
+
+        .nav-brand i {
+            font-size: 24px;
+            transition: var(--transition);
+        }
+
+        .nav-brand:hover i {
+            transform: rotate(5deg);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--gray-medium);
+            padding: 10px 16px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 8px;
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: var(--transition);
+            border-radius: 2px;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+            height: 3px;
+        }
+
+        .nav-link.active::before {
+            opacity: 0.2;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .user-name {
+            font-size: 15px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .logout-btn:hover {
+            color: var(--primary);
+            background: rgba(108, 99, 255, 0.1);
+            transform: rotate(15deg);
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .nav-toggle span {
+            width: 22px;
+            height: 2px;
+            background: var(--primary);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* 内容区域样式 - 取消卡片设计 */
+        .content {
+            padding: 20px 0;
+            min-height: calc(100vh - 130px);
+            line-height: 1.6;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            background: var(--card-bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(108, 99, 255, 0.4);
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        /* 区域样式 - 取消卡片设计 */
+        .section {
+            background: var(--glass-bg);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            line-height: 1.5;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        th {
+            background: rgba(108, 99, 255, 0.1);
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        tr:hover {
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        .btn-success {
+            background: linear-gradient(90deg, var(--success), #5BC0BE);
+            color: white;
+            box-shadow: 0 4px 15px rgba(77, 177, 167, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(77, 177, 167, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(90deg, var(--warning), #FF9A3D);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 178, 66, 0.3);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 178, 66, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, var(--danger), #FF7B7B);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        /* 统一按钮动画效果 */
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: translateY(-1px) scale(0.98) !important;
+            transition: transform 0.1s ease;
+        }
+
+        /* 所有按钮的统一悬停效果 */
+        .btn-primary,
+        .btn-success,
+        .btn-warning,
+        .btn-danger,
+        .btn-secondary,
+        .btn-info {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+
+        /* 按钮涟漪效果 */
+        .ripple-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .ripple-effect:active::after {
+            animation: ripple 0.6s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(50, 50);
+                opacity: 0;
+            }
+        }
+
+        /* 状态标签样式 */
+        .status-tag {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background: rgba(77, 177, 167, 0.15);
+            color: #4DB1A7;
+        }
+
+        .status-not-completed {
+            background: rgba(255, 107, 107, 0.15);
+            color: #FF6B6B;
+        }
+
+        /* 页脚样式 - 通透清爽风格 */
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--gray); /* 三级文字色 */
+            font-size: 14px; /* 按照设计要求 */
+            background: rgba(255, 255, 255, 0.5); /* 毛玻璃效果 */
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer a {
+            color: var(--gray-medium); /* 二级文字色 */
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .footer a:hover {
+            color: var(--primary); /* 悬停时使用强调色 */
+            transform: translateX(3px);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 130px; /* 移动端需要更多顶部空间 */
+            }
+
+            .content {
+                padding: 25px;
+            }
+
+            .nav-container {
+                padding: 0 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .page-header h2 {
+                font-size: 24px;
+            }
+
+            .back-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            .btn {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 导航栏 -->
+        <nav class="main-navbar" id="mainNavbar">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>智能教室管理系统</span>
+                </div>
+                
+                <div class="nav-menu" id="navMenu">
+                    <a href="main.html" class="nav-link"><i class="fas fa-home"></i> 控制台</a>
+                    <a href="score.html" class="nav-link"><i class="fas fa-coins"></i> 积分管理</a>
+                    <a href="rules.html" class="nav-link"><i class="fas fa-book"></i> 规则管理</a>
+                    <a href="random.html" class="nav-link"><i class="fas fa-random"></i> 随机抽号</a>
+                    <a href="homework.html" class="nav-link"><i class="fas fa-book-open"></i> 作业管理</a>
+                    <a href="clean.html" class="nav-link active"><i class="fas fa-broom"></i> 卫生管理</a>
+                    <a href="settings.html" class="nav-link"><i class="fas fa-cog"></i> 系统设置</a>
+                    <a href="monitor.html" class="nav-link"><i class="fas fa-server"></i> 系统监控</a>
+                    <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> 数据大屏</a>
+                    <a href="lab.html" class="nav-link"><i class="fas fa-flask"></i> 实验室</a>
+                </div>
+                
+                <div class="nav-user">
+                    <div class="user-avatar">A</div>
+                    <span class="user-name">管理员</span>
+                    <button class="logout-btn" title="退出登录"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+                
+                <div class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- 主内容区域 -->
+        <div class="content">
+            <div class="page-header">
+                <h2><i class="fas fa-broom"></i> 卫生管理系统</h2>
+                <button class="back-btn"><i class="fas fa-arrow-left"></i> 返回控制台</button>
+            </div>
+            
+            <div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
+                <!-- 添加值日安排 -->
+                <div class="section">
+                    <h3 class="section-header"><i class="fas fa-plus-circle"></i> 添加值日安排</h3>
+                    <div class="form-group">
+                        <label for="studentSelect"><i class="fas fa-user"></i> 选择学生</label>
+                        <select id="studentSelect" class="form-control">
+                            <option value="">请选择学生</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="positionSelect"><i class="fas fa-map-marker-alt"></i> 值日岗位</label>
+                        <select id="positionSelect">
+                            <option value="">请选择岗位</option>
+                            <option value="讲台">讲台</option>
+                            <option value="黑板">黑板</option>
+                            <option value="地面">地面</option>
+                            <option value="窗户">窗户</option>
+                            <option value="桌椅">桌椅</option>
+                            <option value="垃圾桶">垃圾桶</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="dateInput"><i class="fas fa-calendar"></i> 值日日期</label>
+                        <input type="date" id="dateInput">
+                    </div>
+                    <button id="addCleanBtn" class="btn btn-primary"><i class="fas fa-plus"></i> 添加安排</button>
+                </div>
+                
+                <!-- 值日安排列表 -->
+                <div class="section">
+                    <h3 class="section-header"><i class="fas fa-list"></i> 值日安排列表</h3>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>学生</th>
+                                    <th>岗位</th>
+                                    <th>日期</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cleanTableBody">
+                                <!-- 动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" style="margin-top: 20px;">
+                <h3 class="section-header"><i class="fas fa-history"></i> 值日历史记录</h3>
+                <div style="max-height: 300px; overflow-y: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>学生</th>
+                                <th>岗位</th>
+                                <th>日期</th>
+                                <th>完成情况</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>智能教室管理系统</p>
+            <span>•</span>
+            <a href="LuminaUI/index.html" target="_blank">
+                <span>Powered by LuminaUI</span>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // 本地存储键名
+        const STORAGE_KEYS = {
+            students: 'students',
+            cleanPositions: 'clean_positions',
+            cleanStatus: 'clean_status'
+        };
+
+        // 导航栏交互脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            const navToggle = document.getElementById('navToggle');
+            const navMenu = document.getElementById('navMenu');
+            
+            // 移动端菜单切换
+            navToggle && navToggle.addEventListener('click', function() {
+                navMenu && navMenu.classList.toggle('active');
+                
+                // 汉堡菜单动画
+                const spans = navToggle.querySelectorAll('span');
+                if (navMenu && navMenu.classList.contains('active')) {
+                    spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                    spans[1].style.opacity = '0';
+                    spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+                } else {
+                    spans[0].style.transform = 'none';
+                    spans[1].style.opacity = '1';
+                    spans[2].style.transform = 'none';
+                }
+            });
+            
+            // 滚动时导航栏样式变化
+            window.addEventListener('scroll', function() {
+                const navbar = document.getElementById('mainNavbar');
+                if (navbar) {
+                    if (window.scrollY > 100) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                }
+            });
+            
+            // 设置当前页面的导航链接为活跃状态
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const linkPath = link.getAttribute('href');
+                if (linkPath === currentPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            // 设置默认值日日期为今天
+            const today = new Date();
+            document.getElementById('dateInput').valueAsDate = today;
+            
+            // 加载学生列表
+            loadStudents();
+            
+            // 加载值日安排
+            loadCleanPositions();
+            
+            // 加载历史记录
+            loadHistory();
+            
+            // 添加值日安排按钮事件
+            document.getElementById('addCleanBtn').addEventListener('click', addCleanPosition);
+            
+            // 导航栏返回按钮
+            document.querySelector('.back-btn').addEventListener('click', () => {
+                window.location.href = 'main.html';
+            });
+            
+            // 登出按钮功能
+            const logoutBtn = document.querySelector('.logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    // 清除认证会话
+                    if (typeof authManager !== 'undefined') {
+                        authManager.clearSession();
+                    }
+                    setTimeout(() => {
+                        if (typeof showAlert !== 'undefined') {
+                            showAlert('您已成功登出系统', 'success');
+                        } else {
+                            alert('您已成功登出系统');
+                        }
+                        window.location.href = './login.html';
+                    }, 1000);
+                });
+            }
+        });
+
+        // 加载学生列表
+        function loadStudents() {
+            try {
+                const students = JSON.parse(localStorage.getItem(STORAGE_KEYS.students) || '[]');
+                const studentSelect = document.getElementById('studentSelect');
+                
+                // 清空选项
+                studentSelect.innerHTML = '<option value="">请选择学生</option>';
+                
+                // 添加学生选项
+                students.forEach(student => {
+                    const option = document.createElement('option');
+                    option.value = student.username;
+                    option.textContent = student.username;
+                    studentSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('加载学生列表失败:', error);
+            }
+        }
+
+        // 加载值日安排
+        function loadCleanPositions() {
+            try {
+                const cleanPositions = JSON.parse(localStorage.getItem(STORAGE_KEYS.cleanPositions) || '{}');
+                const cleanStatus = JSON.parse(localStorage.getItem(STORAGE_KEYS.cleanStatus) || '{}');
+                const today = new Date().toISOString().split('T')[0];
+                
+                // 获取今天的所有值日安排
+                const todayPositions = [];
+                for (const studentId in cleanPositions) {
+                    if (cleanPositions[studentId].date === today) {
+                        todayPositions.push({
+                            ...cleanPositions[studentId],
+                            studentId: studentId
+                        });
+                    }
+                }
+                
+                const tbody = document.getElementById('cleanTableBody');
+                tbody.innerHTML = '';
+                
+                todayPositions.forEach(position => {
+                    // 检查完成状态，默认为已完成
+                    const isCompleted = cleanStatus[today]?.[position.studentId] !== false;
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${position.name}</td>
+                        <td>${position.position}</td>
+                        <td>${position.date}</td>
+                        <td>
+                            <span class="status-tag ${isCompleted ? 'status-completed' : 'status-not-completed'}">
+                                ${isCompleted ? '已完成' : '未完成'}
+                            </span>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                if (todayPositions.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">今日暂无值日安排</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载值日安排失败:', error);
+            }
+        }
+
+        // 加载历史记录
+        function loadHistory() {
+            try {
+                const cleanPositions = JSON.parse(localStorage.getItem(STORAGE_KEYS.cleanPositions) || '{}');
+                const cleanStatus = JSON.parse(localStorage.getItem(STORAGE_KEYS.cleanStatus) || '{}');
+                
+                const tbody = document.getElementById('historyTableBody');
+                tbody.innerHTML = '';
+                
+                // 只显示最近的记录
+                const recentDates = Object.keys(cleanStatus).sort().slice(-10); // 最近10天
+                
+                for (const date of recentDates) {
+                    const dateStatus = cleanStatus[date];
+                    for (const studentId in dateStatus) {
+                        if (cleanPositions[studentId] && cleanPositions[studentId].date === date) {
+                            const position = cleanPositions[studentId];
+                            const isCompleted = dateStatus[studentId];
+                            
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${position.name}</td>
+                                <td>${position.position}</td>
+                                <td>${date}</td>
+                                <td>
+                                    <span class="status-tag ${isCompleted ? 'status-completed' : 'status-not-completed'}">
+                                        ${isCompleted ? '已完成' : '未完成'}
+                                    </span>
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+                        }
+                    }
+                }
+                
+                if (tbody.children.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">暂无历史记录</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载历史记录失败:', error);
+            }
+        }
+
+        // 添加值日安排
+        function addCleanPosition() {
+            const studentId = document.getElementById('studentSelect').value;
+            const position = document.getElementById('positionSelect').value;
+            const date = document.getElementById('dateInput').value;
+            
+            if (!studentId) {
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('请选择学生');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('请选择学生', 'error');
+} else {
+    alert('请选择学生');
+}
+                }
+                return;
+            }
+            
+            if (!position) {
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('请选择值日岗位');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('请选择值日岗位', 'error');
+} else {
+    alert('请选择值日岗位');
+}
+                }
+                return;
+            }
+            
+            if (!date) {
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('请选择值日日期');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('请选择值日日期', 'error');
+} else {
+    alert('请选择值日日期');
+}
+                }
+                return;
+            }
+            
+            try {
+                const students = JSON.parse(localStorage.getItem(STORAGE_KEYS.students) || '[]');
+                const student = students.find(s => s.username === studentId);
+                
+                if (!student) {
+                    if (typeof dynamicIsland !== 'undefined') {
+                        dynamicIsland.error('未找到该学生');
+                    } else {
+                        if (typeof showAlert !== 'undefined') {
+    showAlert('未找到该学生', 'error');
+} else {
+    alert('未找到该学生');
+}
+                    }
+                    return;
+                }
+                
+                // 初始化值日安排对象
+                let cleanPositions = JSON.parse(localStorage.getItem(STORAGE_KEYS.cleanPositions) || '{}');
+                
+                // 添加新的值日安排
+                cleanPositions[studentId] = {
+                    name: studentId,
+                    position: position,
+                    date: date
+                };
+                
+                localStorage.setItem(STORAGE_KEYS.cleanPositions, JSON.stringify(cleanPositions));
+                
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.success('值日安排添加成功');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('值日安排添加成功', 'success');
+} else {
+    alert('值日安排添加成功');
+}
+                }
+                
+                // 清空表单
+                document.getElementById('positionSelect').value = '';
+                
+                // 重新加载列表
+                loadCleanPositions();
+                loadHistory();
+            } catch (error) {
+                console.error('添加值日安排失败:', error);
+                if (typeof dynamicIsland !== 'undefined') {
+                    dynamicIsland.error('添加值日安排失败，请重试');
+                } else {
+                    if (typeof showAlert !== 'undefined') {
+    showAlert('添加值日安排失败，请重试', 'error');
+} else {
+    alert('添加值日安排失败，请重试');
+}
+                }
+            }
+        }
+    </script>
+    </body>
+<!-- 引入Dynamic Island管理器 -->
+<script src="js/dynamic-island.js"></script>
+<script>
+    // 页面加载完成后，确保Dynamic Island显示问候语
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof dynamicIsland !== 'undefined') {
+            // 短暂延迟后显示时间，确保页面完全加载
+            setTimeout(() => {
+                dynamicIsland.updateTime();
+            }, 1000);
+        }
+    });
+</script>
+</html>

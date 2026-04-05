@@ -1,0 +1,2154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能教室管理系统 - 积分</title>
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" as="script">
+    <!-- 引入LuminaUI样式 -->
+    <link rel="preload" href="LuminaUI/css/lumina.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="LuminaUI/css/buttons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <!-- 引入动态岛样式 -->
+    <link rel="preload" href="css/dynamic-island.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <!-- 引入页面切换动画样式 -->
+    
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <style>
+        :root {
+            --primary: #6C63FF; /* 紫色系作为主要强调色，更显灵动 */
+            --secondary: #4A44A8;
+            --accent: #FF6584; /* 活力粉色 */
+            --light: #F8F9FF; /* 淡紫色背景 */
+            --dark: #2A2D3A; /* 深色文字 */
+            --success: #4DB1A7; /* 绿色 */
+            --warning: #FFB242; /* 橙色 */
+            --danger: #FF6B6B; /* 红色 */
+            --gray: #9599A8; /* 灰色文字 */
+            --gray-medium: #6C7284; /* 中等灰色 */
+            --card-bg: rgba(255, 255, 255, 0.75); /* 高透明度毛玻璃效果 */
+            --glass-bg: rgba(255, 255, 255, 0.75); /* 毛玻璃效果 */
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15); /* 柔和阴影 */
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 平滑过渡 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%); /* 柔和渐变背景 */
+            min-height: 100vh;
+            padding-top: 70px; /* 为固定导航栏留出空间 */
+            color: var(--dark);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 背景装饰元素 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 101, 132, 0.05) 0%, rgba(255, 255, 255, 0) 20%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 95%;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 90vh;
+        }
+
+        /* 导航栏样式 - 固定在顶部 */
+        .main-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.85); /* 毛玻璃效果 */
+            backdrop-filter: blur(16px); /* 毛玻璃模糊效果 */
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 1000;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .main-navbar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 18px;
+            transition: var(--transition);
+        }
+
+        .nav-brand:hover {
+            transform: translateX(5px);
+        }
+
+        .nav-brand i {
+            font-size: 24px;
+            transition: var(--transition);
+        }
+
+        .nav-brand:hover i {
+            transform: rotate(5deg);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--gray-medium);
+            padding: 10px 16px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 8px;
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: var(--transition);
+            border-radius: 2px;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+            height: 3px;
+        }
+
+        .nav-link.active::before {
+            opacity: 0.2;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .user-name {
+            font-size: 15px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .logout-btn:hover {
+            color: var(--primary);
+            background: rgba(108, 99, 255, 0.1);
+            transform: rotate(15deg);
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .nav-toggle span {
+            width: 22px;
+            height: 2px;
+            background: var(--primary);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* 内容区域样式 - 取消卡片设计 */
+        .content {
+            padding: 20px 0;
+            min-height: calc(100vh - 130px);
+            line-height: 1.6;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            background: var(--card-bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(108, 99, 255, 0.4);
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        /* 区域样式 - 取消卡片设计 */
+        .section {
+            background: var(--glass-bg);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        .btn-success {
+            background: linear-gradient(90deg, var(--success), #5BC0BE);
+            color: white;
+            box-shadow: 0 4px 15px rgba(77, 177, 167, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(77, 177, 167, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(90deg, var(--warning), #FF9A3D);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 178, 66, 0.3);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 178, 66, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, var(--danger), #FF7B7B);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        /* 统一按钮动画效果 */
+        .btn {
+            position: relative;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+            z-index: 1; /* 确保伪元素在内容下方 */
+            pointer-events: none; /* 确保伪元素不拦截点击事件 */
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn {
+            overflow: hidden; /* 只在需要时才隐藏溢出 */
+        }
+
+        .btn:active {
+            transform: translateY(-1px) scale(0.98) !important;
+            transition: transform 0.1s ease;
+        }
+
+        /* 所有按钮的统一悬停效果 */
+        .btn-primary,
+        .btn-success,
+        .btn-warning,
+        .btn-danger,
+        .btn-secondary,
+        .btn-info {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+
+        /* 按钮涟漪效果 */
+        .ripple-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .ripple-effect:active::after {
+            animation: ripple 0.6s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(50, 50);
+                opacity: 0;
+            }
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            line-height: 1.5;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            line-height: 1.5;
+            background: rgba(255, 255, 255, 0.8); /* 提高透明度以确保可见 */
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            display: table; /* 确保表格正确显示 */
+            color: var(--dark); /* 确保文本颜色 */
+        }
+        
+        /* 确保表格单元格文本可见 */
+        .user-table td, .user-table th {
+            color: var(--dark);
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* 覆盖默认的td和th样式以确保在user-table中的文本可见 */
+        table th, table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            color: var(--dark); /* 确保文本颜色 */
+            min-height: 20px; /* 确保最小高度 */
+            line-height: 1.4; /* 确保行高 */
+            visibility: visible !important; /* 确保可见 */
+            opacity: 1 !important; /* 确保不透明 */
+        }
+        
+        /* 确保表格行可见 */
+        table tr {
+            visibility: visible !important;
+            opacity: 1 !important;
+            min-height: 50px; /* 确保行有最小高度 */
+            display: table-row !important;
+        }
+        
+        /* 确保表格容器内容可见 */
+        .section {
+            overflow: visible !important; /* 确保内容不会被隐藏 */
+            min-height: 200px; /* 确保有足够的空间显示表格 */
+        }
+        
+        /* 确保用户表格容器可见 */
+        #userTableBody {
+            min-height: 50px;
+            display: table-row-group !important;
+            visibility: visible !important;
+            overflow: visible !important;
+        }
+        
+        /* 为用户管理表格部分添加特殊样式 */
+        .section {
+            overflow: visible !important; /* 确保内容不会被隐藏 */
+        }
+
+        th {
+            background: rgba(108, 99, 255, 0.1);
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        tr:hover {
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        /* 操作列样式 - 确保删除按钮居中显示 */
+        .user-table td:last-child {
+            text-align: center;
+            vertical-align: middle;
+            min-width: 100px; /* 确保操作列有足够宽度 */
+            position: relative; /* 确保按钮定位正确 */
+        }
+        
+        .user-table td:last-child .btn {
+            display: inline-flex; /* 确保按钮正确显示 */
+            align-items: center; /* 确保内容垂直居中 */
+            justify-content: center; /* 确保内容水平居中 */
+        }
+
+        /* 页脚样式 */
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--gray); /* 三级文字色 */
+            font-size: 14px; /* 按照设计要求 */
+            background: rgba(255, 255, 255, 0.5); /* 毛玻璃效果 */
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-top: 1px solid var(--glass-border);
+            margin-top: 20px;
+        }
+
+        .footer a {
+            color: var(--gray-medium); /* 二级文字色 */
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .footer a:hover {
+            color: var(--primary); /* 悬停时使用强调色 */
+            transform: translateX(3px);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 130px; /* 移动端需要更多顶部空间 */
+            }
+
+            .content {
+                padding: 10px 0;
+            }
+
+            .nav-container {
+                padding: 0 15px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .page-header h2 {
+                font-size: 24px;
+            }
+
+            .back-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            .btn {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+
+        }
+        
+        /* 为积分正负数添加样式 */
+        .points-positive {
+            color: #4DB1A7;
+            font-weight: 600;
+        }
+        
+        .points-negative {
+            color: #FF6B6B;
+            font-weight: 600;
+        }
+        
+        /* 防止按钮在快速点击时被拉长 */
+        .btn.prevent-stretch {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .btn.prevent-stretch:active {
+            transform: translateY(-1px);
+        }
+        
+        /* 按钮加载状态样式 */
+        .btn.processing {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .btn.processing {
+            pointer-events: none;
+        }
+        
+        /* 非线性动画 - 修改所有动画为非线性曲线 */
+        .pulse {
+            animation: pulse 2s infinite cubic-bezier(0.5, 1, 0.89, 1);
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(108, 99, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(108, 99, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(108, 99, 255, 0); }
+        }
+        
+        /* 非线性震动动画 */
+        .shake {
+            animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+            animation-iteration-count: infinite;
+        }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        
+        /* 非线性弹跳动画 */
+        .bounce {
+            animation: bounce 1s infinite cubic-bezier(0.445, 0.05, 0.55, 0.95);
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+        
+        /* 非线性闪烁动画 */
+        .blink {
+            animation: blink 1s step-end infinite;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        
+        /* 非线性旋转动画 */
+        .spin {
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 悬停动画增强 */
+        .hover-lift {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(108, 99, 255, 0.3);
+        }
+        
+        /* 按钮点击波纹效果 */
+        .ripple {
+            position: relative;
+        }
+        
+        .ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .ripple:active::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .ripple {
+            overflow: hidden; /* 确保只有在需要时才隐藏溢出 */
+        }
+        
+        /* 卡片悬停效果 */
+        .section {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* 非线性渐入动画 */
+        .fade-in-element {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 优化加载动画 */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+        }
+        
+        @keyframes spin {
+            0% { 
+                transform: rotate(0deg);
+                border-top-color: #fff;
+            }
+            50% { 
+                border-top-color: rgba(255,255,255,0.7);
+            }
+            100% { 
+                transform: rotate(360deg);
+                border-top-color: #fff;
+            }
+        }
+        
+        /* 页面加载动画 */
+        .page-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .page-loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-logo {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite cubic-bezier(0.5, 1, 0.89, 1);
+        }
+        
+        .loading-text {
+            color: var(--primary);
+            font-size: 16px;
+            font-weight: 500;
+            animation: fadeInOut 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+        /* 数据更新动画 */
+        .data-update {
+            animation: dataUpdate 0.3s ease-out;
+        }
+        
+        @keyframes dataUpdate {
+            0% { background-color: rgba(77, 177, 167, 0.2); }
+            100% { background-color: transparent; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 - 固定在顶部 -->
+    <nav class="main-navbar" id="mainNavbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-graduation-cap"></i>
+                <span>智能教室管理系统</span>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="main.html" class="nav-link"><i class="fas fa-home"></i> 控制台</a>
+                <a href="score.html" class="nav-link active"><i class="fas fa-coins"></i> 积分管理</a>
+                <a href="rules.html" class="nav-link"><i class="fas fa-book"></i> 规则管理</a>
+                <a href="random.html" class="nav-link"><i class="fas fa-random"></i> 随机抽号</a>
+                <a href="homework.html" class="nav-link"><i class="fas fa-book-open"></i> 作业管理</a>
+                <a href="clean.html" class="nav-link"><i class="fas fa-broom"></i> 卫生管理</a>
+                <a href="settings.html" class="nav-link"><i class="fas fa-cog"></i> 系统设置</a>
+                <a href="monitor.html" class="nav-link"><i class="fas fa-server"></i> 系统监控</a>
+                <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i> 数据大屏</a>
+                <a href="lab.html" class="nav-link"><i class="fas fa-flask"></i> 实验室</a>
+            </div>
+            
+            <div class="nav-user">
+                <div class="user-avatar">A</div>
+                <span class="user-name">管理员</span>
+                <button class="logout-btn" title="退出登录"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+            
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 页面切换遮罩 -->
+    <div class="page-transition-overlay" id="pageTransitionOverlay"></div>
+    
+    <div class="container">
+        <!-- 主内容区域 -->
+        <div class="content">
+            <div class="page-header">
+                <h2><i class="fas fa-coins"></i> 积分管理系统</h2>
+                <button class="back-btn"><i class="fas fa-arrow-left"></i> 返回控制台</button>
+            </div>
+            
+            <div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
+                <!-- 用户管理 -->
+                <div class="section">
+                    <h3 class="section-header"><i class="fas fa-users"></i> 用户管理</h3>
+                    <div class="form-group">
+                        <input type="text" id="newStudentInput" placeholder="输入新用户名">
+                    </div>
+                    <button class="btn btn-primary" id="addStudentBtn" style="width: 100%;">
+                        <i class="fas fa-user-plus"></i> 添加用户
+                    </button>
+                    
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label>批量导入学生</label>
+                        <input type="file" id="importExcelFile" accept=".xlsx, .xls" style="padding: 8px;">
+                    </div>
+                    
+                    <button class="btn btn-success" id="importExcelBtn" style="width: 100%; margin-bottom: 15px;">
+                        <i class="fas fa-file-excel"></i> 导入Excel
+                    </button>
+                    
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>学号</th>
+                                <th>姓名</th>
+                                <th>积分</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 积分操作 -->
+                <div class="section">
+                    <h3 class="section-header"><i class="fas fa-edit"></i> 积分操作</h3>
+                    <div class="form-group">
+                        <label>选择用户</label>
+                        <select id="userSelect">
+                            <option value="">请选择用户</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>操作类型</label>
+                        <select id="operationType">
+                            <option value="add">增加积分</option>
+                            <option value="subtract">扣除积分</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>积分数量</label>
+                        <input type="number" id="pointsInput" value="5.0" min="0.1" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>原因</label>
+                        <textarea id="reasonInput" placeholder="请输入操作原因"></textarea>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="executeOperationBtn" style="width: 100%;">
+                        <i class="fas fa-check-circle"></i> 执行操作
+                    </button>
+                </div>
+                
+                <!-- 批量操作 -->
+                <div class="section">
+                    <h3 class="section-header"><i class="fas fa-tasks"></i> 批量操作</h3>
+                    
+                    <div class="form-group">
+                        <label>操作类型</label>
+                        <select id="batchOperationType">
+                            <option value="add">全部增加积分</option>
+                            <option value="subtract">全部扣除积分</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>积分数量</label>
+                        <input type="number" id="batchPointsInput" value="5.0" min="0.1" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>原因</label>
+                        <textarea id="batchReasonInput" placeholder="请输入批量操作原因">课堂表现优秀</textarea>
+                    </div>
+                    
+                    <button class="btn btn-success" id="batchExecuteBtn" style="width: 100%;">
+                        <i class="fas fa-bolt"></i> 执行批量操作
+                    </button>
+                </div>
+                
+                <!-- 积分排行榜 -->
+                <div class="section">
+                    <h3 class="section-header"><i class="fas fa-trophy"></i> 积分排行榜</h3>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>用户名</th>
+                                <th>积分</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody">
+                            <!-- 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 操作历史 -->
+                <div class="section">
+                    <h3 class="section-header"><i class="fas fa-history"></i> 操作历史</h3>
+                    
+                    <div class="form-group">
+                        <input type="text" id="searchLogInput" placeholder="搜索日志...">
+                    </div>
+                    
+                    <button class="btn btn-warning" id="exportLogBtn" style="width: 100%; margin-bottom: 15px;">
+                        <i class="fas fa-file-export"></i> 导出为TXT
+                    </button>
+                    
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>用户</th>
+                                    <th>操作</th>
+                                    <th>积分</th>
+                                    <th>原因</th>
+                                </tr>
+                            </thead>
+                            <tbody id="operationHistoryBody">
+                                <!-- 动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 系统管理 -->
+                <div class="section">
+                    <h3 class="section-header"><i class="fas fa-cog"></i> 系统管理</h3>
+                    
+                    <div class="form-group">
+                        <label>导入历史记录</label>
+                        <input type="file" id="importFile" style="padding: 8px;">
+                    </div>
+                    
+                    <button class="btn btn-primary" id="importBtn" style="width: 100%; margin-bottom: 15px;">
+                        <i class="fas fa-file-import"></i> 导入历史记录
+                    </button>
+                    
+                    <button class="btn btn-warning" id="resetPointsBtn" style="width: 100%;">
+                        <i class="fas fa-sync-alt"></i> 重置所有积分
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>智能教室管理系统</p>
+            <span>•</span>
+            <a href="LuminaUI/index.html" target="_blank">
+                <span>Powered by LuminaUI</span>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // 检查是否在本地文件环境中运行
+        const isLocalFile = window.location.protocol === 'file:';
+        
+        // API基础URL
+        const API_BASE = isLocalFile ? '' : '/api';
+
+        // 本地存储键名
+        const STORAGE_KEYS = {
+            students: 'students',
+            operations: 'operations'
+        };
+
+        // 安全调用dynamic island的辅助函数
+        function safeDynamicIslandCall(method, message, type = 'info') {
+            // 确保dynamicIsland已初始化
+            if (typeof initializeDynamicIsland === 'function') {
+                initializeDynamicIsland(); // 确保初始化
+            }
+
+            // 方法名映射：将简短方法名映射到实际方法名
+            const methodMap = {
+                'info': 'showInfo',
+                'success': 'showSuccess', 
+                'warning': 'showWarning',
+                'error': 'showError',
+                'greeting': 'showGreeting'
+            };
+            
+            const actualMethod = methodMap[method] || method;
+            
+            // 检查dynamicIsland对象及其方法是否可用
+            if (typeof dynamicIsland !== 'undefined' && dynamicIsland && typeof dynamicIsland[actualMethod] === 'function') {
+                try {
+                    dynamicIsland[actualMethod](message);
+                } catch (error) {
+                    console.error(`Dynamic Island ${actualMethod} 方法调用失败:`, error);
+                    // 尝试使用show方法作为备选
+                    if (typeof dynamicIsland.show === 'function') {
+                        try {
+                            dynamicIsland.show(type, message);
+                        } catch (fallbackError) {
+                            console.error('Dynamic Island show方法也失败:', fallbackError);
+                            fallbackToShowAlert(message, type);
+                        }
+                    } else {
+                        fallbackToShowAlert(message, type);
+                    }
+                }
+            } else {
+                // 如果dynamicIsland不可用，使用降级方案
+                fallbackToShowAlert(message, type);
+            }
+        }
+
+        // 降级的通知函数
+        function fallbackToShowAlert(message, type) {
+            try {
+                if (typeof showAlert !== 'undefined') {
+                    showAlert(message, type);
+                } else {
+                    alert(message);
+                }
+            } catch (error) {
+                console.error('所有通知方法都失败:', error);
+                alert(message);
+            }
+        }
+
+        // 检查并初始化本地存储数据
+        async function initializeLocalData() {
+            if (isLocalFile) {
+                // 检查本地存储中是否已有数据
+                const studentsData = localStorage.getItem(STORAGE_KEYS.students);
+                const operationsData = localStorage.getItem(STORAGE_KEYS.operations);
+                
+                // 如果本地存储为空，尝试从预设的默认数据初始化（如果有的话）
+                if (!studentsData || studentsData === '[]') {
+                    console.log('检测到本地存储为空，尝试初始化...');
+                    // 在本地文件模式下，如果用户之前通过服务器使用过系统，
+                    // 数据可能已经保存在localStorage中，否则将保持为空
+                }
+            }
+        }
+        
+        // 同步本地存储数据到服务器（在本地文件模式下作为模拟）
+        async function syncDataToStorage() {
+            if (isLocalFile) {
+                // 在本地文件模式下，我们不能直接写入文件，但可以保留这个函数以备将来扩展
+                // 目前主要是在浏览器本地存储和服务器模式之间保持一致的API
+                console.log('在本地文件模式下，数据已保存到本地存储');
+            }
+        }
+        
+        // 防止按钮重复点击的函数
+        function preventDoubleSubmit(button, callback) {
+            if (button.classList.contains('processing')) {
+                return;
+            }
+            
+            button.classList.add('processing');
+            button.disabled = true;
+            
+            // 保存原始内容
+            const originalContent = button.innerHTML;
+            
+            // 显示加载状态 - 保持按钮宽度不变
+            const buttonWidth = button.offsetWidth;
+            button.style.width = buttonWidth + 'px';
+            
+            if (button.querySelector('i')) {
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 处理中...';
+            } else {
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
+            
+            // 执行回调函数
+            Promise.resolve(callback())
+                .finally(() => {
+                    // 恢复按钮状态
+                    button.innerHTML = originalContent;
+                    button.disabled = false;
+                    button.classList.remove('processing');
+                    button.style.width = ''; // 恢复自动宽度
+                });
+        }
+        
+        // 动画工具函数 - 添加动画打断功能
+        function animateElement(element, animationClass, duration = 1000) {
+            // 如果元素已经有动画类，则先移除
+            if (element.classList.contains(animationClass)) {
+                element.classList.remove(animationClass);
+                // 强制重排以确保移除动画
+                void element.offsetWidth;
+            }
+            // 添加新的动画类
+            element.classList.add(animationClass);
+            
+            // 在指定时间后移除动画类
+            setTimeout(() => {
+                element.classList.remove(animationClass);
+            }, duration);
+        }
+        
+        // 打断元素动画的函数
+        function interruptAnimation(element) {
+            // 获取当前应用到元素的动画名称
+            const computedStyle = window.getComputedStyle(element);
+            const animationName = computedStyle.animationName;
+            
+            if (animationName && animationName !== 'none') {
+                // 暂停当前动画
+                element.style.animationPlayState = 'paused';
+                // 获取动画持续时间
+                const animationDuration = computedStyle.animationDuration;
+                // 稍后恢复动画
+                setTimeout(() => {
+                    element.style.animationPlayState = 'running';
+                }, 10); // 10ms后恢复
+            }
+        }
+        
+        // 导航栏交互脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化本地数据
+            initializeLocalData();
+            
+            const navToggle = document.getElementById('navToggle');
+            const navMenu = document.getElementById('navMenu');
+            
+            // 移动端菜单切换
+            navToggle && navToggle.addEventListener('click', function() {
+                navMenu && navMenu.classList.toggle('active');
+                
+                // 汉堡菜单动画
+                const spans = navToggle.querySelectorAll('span');
+                if (navMenu && navMenu.classList.contains('active')) {
+                    spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                    spans[1].style.opacity = '0';
+                    spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+                } else {
+                    spans[0].style.transform = 'none';
+                    spans[1].style.opacity = '1';
+                    spans[2].style.transform = 'none';
+                }
+            });
+            
+            // 滚动时导航栏样式变化
+            window.addEventListener('scroll', function() {
+                const navbar = document.getElementById('mainNavbar');
+                if (navbar) {
+                    if (window.scrollY > 100) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                }
+            });
+            
+            // 设置当前页面的导航链接为活跃状态
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const linkPath = link.getAttribute('href');
+                if (linkPath === currentPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            // 初始化所有组件（使用空数组作为初始值）
+            updateLeaderboard([]);
+            populateUserSelect([]);
+            renderOperations([]);
+            
+            // 加载数据
+            loadStudents();
+            loadOperations();
+            
+            // 移除事件委托，因为现在使用内联事件处理
+            
+            // 绑定事件 - 添加防重复点击处理
+            document.getElementById('addStudentBtn').addEventListener('click', () => {
+                preventDoubleSubmit(document.getElementById('addStudentBtn'), addStudent);
+            });
+            
+            document.getElementById('executeOperationBtn').addEventListener('click', () => {
+                preventDoubleSubmit(document.getElementById('executeOperationBtn'), performOperation);
+            });
+            
+            document.getElementById('batchExecuteBtn').addEventListener('click', () => {
+                preventDoubleSubmit(document.getElementById('batchExecuteBtn'), performBatchOperation);
+            });
+            
+            document.getElementById('resetPointsBtn').addEventListener('click', () => {
+                preventDoubleSubmit(document.getElementById('resetPointsBtn'), resetPoints);
+            });
+            
+            document.getElementById('importExcelBtn').addEventListener('click', () => {
+                preventDoubleSubmit(document.getElementById('importExcelBtn'), importExcel);
+            });
+            
+            // 新增功能按钮事件绑定
+            document.getElementById('exportLogBtn').addEventListener('click', () => {
+                preventDoubleSubmit(document.getElementById('exportLogBtn'), exportLogToTxt);
+            });
+            
+            document.getElementById('importBtn').addEventListener('click', () => {
+                preventDoubleSubmit(document.getElementById('importBtn'), importHistory);
+            });
+            
+            document.getElementById('searchLogInput').addEventListener('input', searchOperations);
+            
+            // 导航栏返回按钮
+            document.querySelector('.back-btn').addEventListener('click', () => {
+                transitionToPage('main.html', 'particles');
+            });
+            
+            // 登出按钮功能
+            const logoutBtn = document.querySelector('.logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    // 清除认证会话
+                    if (typeof authManager !== 'undefined') {
+                        authManager.clearSession();
+                    }
+                    setTimeout(() => {
+                        alert('您已成功登出系统');
+                        window.location.href = './login.html';
+                    }, 1000);
+                });
+            }
+            
+            // 初始化时间显示
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+            
+            // 确保dynamic island初始化
+            if (typeof initializeDynamicIsland === 'function') {
+                initializeDynamicIsland();
+                
+                // 显示欢迎信息
+                setTimeout(() => {
+                    if (typeof dynamicIsland !== 'undefined' && dynamicIsland) {
+                        dynamicIsland.showGreeting();
+                    }
+                }, 1000);
+            }
+            
+            // 为删除按钮添加事件委托
+            document.getElementById('userTableBody').addEventListener('click', function(e) {
+                if (e.target.closest('.delete-student-btn')) {
+                    const button = e.target.closest('.delete-student-btn');
+                    const studentId = button.getAttribute('data-student-id');
+                    deleteStudentById(studentId);
+                }
+            });
+        });
+
+        // 加载学生数据
+        async function loadStudents() {
+            try {
+                if (isLocalFile) {
+                    // 从本地存储加载数据
+                    let students = JSON.parse(localStorage.getItem(STORAGE_KEYS.students) || '[]');
+                    
+                    // 如果本地存储中没有数据，从服务器获取数据并存储到本地
+                    if (!students || students.length === 0) {
+                        console.log('本地存储中没有学生数据，尝试从服务器获取...');
+                        try {
+                            const response = await fetch(`${API_BASE}/students`);
+                            if (response.ok) {
+                                students = await response.json();
+                                // 将从服务器获取的数据保存到本地存储
+                                localStorage.setItem(STORAGE_KEYS.students, JSON.stringify(students));
+                                console.log(`从服务器获取了 ${students.length} 名学生数据并保存到本地存储`);
+                            } else {
+                                console.error(`从服务器获取学生数据失败: ${response.status} ${response.statusText}`);
+                            }
+                        } catch (serverError) {
+                            console.error('从服务器获取学生数据时发生错误:', serverError);
+                        }
+                    }
+                    
+                    renderStudents(students);
+                    updateLeaderboard(students);
+                    populateUserSelect(students);
+                    return students;
+                } else {
+                    // 从服务器API加载数据
+                    const response = await fetch(`${API_BASE}/students`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const students = await response.json();
+                    renderStudents(students);
+                    updateLeaderboard(students);
+                    populateUserSelect(students);
+                    return students;
+                }
+            } catch (error) {
+                console.error('加载学生数据失败:', error);
+                safeDynamicIslandCall('error', `加载学生数据失败: ${error.message}`);
+                // 即使加载失败，也显示空表格
+                renderStudents([]);
+                updateLeaderboard([]);
+                populateUserSelect([]);
+                return [];
+            }
+        }
+
+        // 加载操作记录
+        async function loadOperations() {
+            try {
+                if (isLocalFile) {
+                    // 检查本地存储中是否有数据
+                    let operationsData = localStorage.getItem(STORAGE_KEYS.operations);
+                    let operations = [];
+                    
+                    if (!operationsData || operationsData === '[]') {
+                        console.log('本地存储中没有操作记录数据，尝试从服务器获取...');
+                        try {
+                            // 从服务器获取操作记录
+                            const response = await fetch(`${API_BASE}/operations`);
+                            if (response.ok) {
+                                operations = await response.json();
+                                // 将从服务器获取的数据保存到本地存储
+                                localStorage.setItem(STORAGE_KEYS.operations, JSON.stringify(operations));
+                                console.log(`从服务器获取了 ${operations.length} 条操作记录并保存到本地存储`);
+                            } else {
+                                console.error(`从服务器获取操作记录失败: ${response.status} ${response.statusText}`);
+                            }
+                        } catch (serverError) {
+                            console.error('从服务器获取操作记录时发生错误:', serverError);
+                        }
+                    } else {
+                        // 使用本地存储中的现有数据
+                        operations = JSON.parse(operationsData);
+                    }
+                    
+                    renderOperations(operations);
+                    return operations;
+                } else {
+                    // 从服务器API加载数据
+                    const response = await fetch(`${API_BASE}/operations`);
+                    const operations = await response.json();
+                    renderOperations(operations);
+                    return operations;
+                }
+            } catch (error) {
+                console.error('加载操作记录失败:', error);
+                safeDynamicIslandCall('error', '加载操作记录失败');
+                return [];
+            }
+        }
+
+        // 添加学生
+        async function addStudent() {
+            const input = document.getElementById('newStudentInput');
+            const username = input.value.trim();
+            if (!username) {
+                safeDynamicIslandCall('warning', '请输入用户名');
+                return;
+            }
+            
+            try {
+                if (isLocalFile) {
+                    // 本地存储模式
+                    const students = JSON.parse(localStorage.getItem(STORAGE_KEYS.students) || '[]');
+                    
+                    // 检查用户名是否已存在
+                    if (students.some(s => s.username === username)) {
+                        safeDynamicIslandCall('warning', '用户名已存在');
+                        return;
+                    }
+                    
+                    // 添加新学生
+                    const newStudent = {
+                        id: Date.now(),
+                        username: username,
+                        points: 0,
+                        studentId: '',
+                        lastUpdated: new Date().toISOString()
+                    };
+                    students.push(newStudent);
+                    localStorage.setItem(STORAGE_KEYS.students, JSON.stringify(students));
+                    input.value = '';
+                    
+                    // 重新加载数据
+                    await loadStudents();
+                    await loadOperations();
+                    safeDynamicIslandCall('success', `已添加学生：${username}`);
+                } else {
+                    // 服务器API模式
+                    const response = await fetch(`${API_BASE}/students`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username })
+                    });
+                    
+                    if (response.ok) {
+                        const newStudent = await response.json();
+                        input.value = '';
+                        
+                        // 重新加载数据
+                        const students = await loadStudents();
+                        const operations = await loadOperations();
+                        safeDynamicIslandCall('success', `已添加学生：${username}`);
+                    } else {
+                        const error = await response.json();
+                        safeDynamicIslandCall('error', error.error || '添加学生失败');
+                    }
+                }
+            } catch (error) {
+                console.error('添加学生失败:', error);
+                safeDynamicIslandCall('error', '添加学生失败');
+            }
+        }
+
+        // 导入Excel文件
+        async function importExcel() {
+            const fileInput = document.getElementById('importExcelFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                safeDynamicIslandCall('warning', '请选择Excel文件');
+                return;
+            }
+            
+            // 检查文件类型
+            const allowedTypes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+            if (!allowedTypes.includes(file.type)) {
+                safeDynamicIslandCall('error', '请选择有效的Excel文件 (.xls 或 .xlsx)');
+                return;
+            }
+            
+            // 读取文件
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    // 使用SheetJS解析Excel
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // 获取第一个工作表
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    // 转换为JSON
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    // 处理数据 (跳过标题行)
+                    const studentsData = [];
+                    for (let i = 1; i < jsonData.length; i++) {
+                        const row = jsonData[i];
+                        // 支持一列或两列的数据格式
+                        if (row.length >= 1 && row[0]) {
+                            const studentData = {
+                                username: row[0].toString()
+                            };
+                            
+                            // 如果有第二列，则作为学号
+                            if (row.length >= 2 && row[1]) {
+                                studentData.studentId = row[1].toString();
+                            } else {
+                                studentData.studentId = '';
+                            }
+                            
+                            studentsData.push(studentData);
+                        }
+                    }
+                    
+                    if (studentsData.length === 0) {
+                        safeDynamicIslandCall('error', 'Excel文件中没有有效的学生数据');
+                        return;
+                    }
+                    
+                    if (isLocalFile) {
+                        // 本地存储模式
+                        // 获取现有学生数据
+                        const existingStudents = JSON.parse(localStorage.getItem(STORAGE_KEYS.students) || '[]');
+                        
+                        // 合并新数据
+                        const newStudents = studentsData.map(data => ({
+                            id: Date.now() + Math.random(), // 简单的ID生成
+                            username: data.username,
+                            studentId: data.studentId || '',
+                            points: 0,
+                            lastUpdated: new Date().toISOString()
+                        }));
+                        
+                        // 合并现有学生和新学生
+                        const allStudents = [...existingStudents, ...newStudents];
+                        
+                        // 保存到本地存储
+                        localStorage.setItem(STORAGE_KEYS.students, JSON.stringify(allStudents));
+                        
+                        safeDynamicIslandCall('success', `成功导入 ${studentsData.length} 名学生`);
+                        fileInput.value = '';
+                        
+                        // 重新加载数据
+                        await loadStudents();
+                        await loadOperations();
+                    } else {
+                        // 服务器API模式 - 需要调整数据格式以匹配服务器API
+                        // 服务器API只需要用户名，不需要学号字段
+                        const usernames = studentsData.map(data => data.username);
+                        
+                        // 逐个添加学生（因为服务器没有批量添加学生API）
+                        let successCount = 0;
+                        for (const username of usernames) {
+                            try {
+                                const response = await fetch(`${API_BASE}/students`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ username })
+                                });
+                                
+                                if (response.ok) {
+                                    successCount++;
+                                }
+                            } catch (error) {
+                                console.error(`添加学生 ${username} 失败:`, error);
+                            }
+                        }
+                        
+                        safeDynamicIslandCall('success', `成功导入 ${successCount} 名学生`);
+                        fileInput.value = '';
+                        
+                        // 重新加载数据
+                        const updatedStudents = await loadStudents();
+                        const operations = await loadOperations();
+                    }
+                } catch (error) {
+                    console.error('解析Excel文件失败:', error);
+                    safeDynamicIslandCall('error', '解析Excel文件失败: ' + error.message);
+                }
+            };
+            
+            reader.onerror = function() {
+                safeDynamicIslandCall('error', '读取文件失败');
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        // 渲染学生列表
+        function renderStudents(students) {
+            const tbody = document.getElementById('userTableBody');
+            if (!tbody) {
+                console.error('找不到用户表格主体');
+                return;
+            }
+            
+            // 按添加时间排序（ID越大表示添加时间越晚）
+            const sortedStudents = students ? [...students].sort((a, b) => a.id - b.id) : [];
+            
+            if (!sortedStudents || sortedStudents.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px;">暂无学生数据</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = sortedStudents.map((student, index) => `
+                <tr style="color: var(--dark) !important; display: table-row !important; visibility: visible !important; opacity: 1 !important;" data-student-id="${student.id}">
+                    <td style="color: var(--dark) !important; display: table-cell !important; visibility: visible !important;">${student.studentId || ''}</td>
+                    <td style="color: var(--dark) !important; display: table-cell !important; visibility: visible !important;">${student.username}</td>
+                    <td style="color: ${student.points >= 0 ? '#4DB1A7' : '#FF6B6B'} !important; display: table-cell !important; visibility: visible !important;" class="${student.points >= 0 ? 'points-positive' : 'points-negative'}">${parseFloat(student.points).toFixed(1)}</td>
+                    <td style="color: var(--dark) !important; display: table-cell !important; visibility: visible !important;">
+                        <button class="btn btn-danger ripple delete-student-btn" data-student-id="${student.id}" title="删除学生 ${student.username}">
+                            <i class="fas fa-trash"></i> 删除
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 删除学生
+        async function deleteStudent(id) {
+            try {
+                // 先获取学生信息用于显示
+                let students = [];
+                let studentName = '';
+                
+                if (isLocalFile) {
+                    students = JSON.parse(localStorage.getItem(STORAGE_KEYS.students) || '[]');
+                    const student = students.find(s => String(s.id) === String(id));
+                    studentName = student ? student.username : '未知学生';
+                } else {
+                    // 从服务器获取学生信息
+                    const response = await fetch(`${API_BASE}/students`);
+                    if (response.ok) {
+                        students = await response.json();
+                        const student = students.find(s => s.id === parseInt(id));
+                        studentName = student ? student.username : '未知学生';
+                    }
+                }
+                
+                if (!confirm(`确定要删除学生 "${studentName}" 吗？`)) return;
+                
+                if (isLocalFile) {
+                    // 本地存储模式
+                    let currentStudents = JSON.parse(localStorage.getItem(STORAGE_KEYS.students) || '[]');
+                    // 确保ID类型匹配，因为本地存储中的ID可能是数字或字符串
+                    const originalLength = currentStudents.length;
+                    currentStudents = currentStudents.filter(s => String(s.id) !== String(id));
+                    const removedCount = originalLength - currentStudents.length;
+                    
+                    if (removedCount > 0) {
+                        localStorage.setItem(STORAGE_KEYS.students, JSON.stringify(currentStudents));
+                        
+                        // 重新加载数据
+                        await loadStudents();
+                        await loadOperations();
+                        safeDynamicIslandCall('success', `学生 "${studentName}" 删除成功`);
+                    } else {
+                        safeDynamicIslandCall('warning', '未找到要删除的学生');
+                    }
+                } else {
+                    // 服务器API模式
+                    const response = await fetch(`${API_BASE}/students/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        // 重新加载数据
+                        await loadStudents();
+                        await loadOperations();
+                        safeDynamicIslandCall('success', `学生 "${studentName}" 删除成功`);
+                    } else {
+                        const errorData = await response.json().catch(() => ({}));
+                        safeDynamicIslandCall('error', `删除学生失败: ${errorData.error || '未知错误'}`);
+                    }
+                }
+            } catch (error) {
+                console.error('删除学生失败:', error);
+                safeDynamicIslandCall('error', `删除学生失败: ${error.message}`);
+            }
+        }
+        
+        // 通过ID删除学生（用于按钮点击事件）
+        async function deleteStudentById(id) {
+            deleteStudent(id);
+        }
+
+        // 更新下拉菜单
+        function populateUserSelect(students) {
+            const select = document.getElementById('userSelect');
+            select.innerHTML = '<option value="">请选择用户</option>' + 
+                students.map(s => `<option value="${s.id}">${s.username}</option>`).join('');
+        }
+
+        // 执行积分操作
+        async function performOperation() {
+            const userId = parseInt(document.getElementById('userSelect').value);
+            const type = document.getElementById('operationType').value;
+            const points = parseFloat(document.getElementById('pointsInput').value);
+            const reason = document.getElementById('reasonInput').value.trim();
+            
+            if (!userId || isNaN(points) || !reason) {
+                safeDynamicIslandCall('warning', '请填写完整信息');
+                return;
+            }
+            
+            const delta = type === 'add' ? points : -points;
+            
+            try {
+                if (isLocalFile) {
+                    // 本地存储模式
+                    const students = JSON.parse(localStorage.getItem(STORAGE_KEYS.students) || '[]');
+                    const student = students.find(s => s.id === userId);
+                    
+                    if (student) {
+                        student.points += delta;
+                        student.lastUpdated = new Date().toISOString();
+                        
+                        // 记录操作
+                        const operations = JSON.parse(localStorage.getItem(STORAGE_KEYS.operations) || '[]');
+                        operations.push({
+                            time: new Date().toLocaleString(),
+                            user: student.username,
+                            type: delta > 0 ? '增加' : '扣除',
+                            points: delta,
+                            reason: reason
+                        });
+                        localStorage.setItem(STORAGE_KEYS.students, JSON.stringify(students));
+                        localStorage.setItem(STORAGE_KEYS.operations, JSON.stringify(operations));
+                        
+                        // 重新加载数据
+                        await loadStudents();
+                        await loadOperations();
+                        safeDynamicIslandCall('success', `${type === 'add' ? '增加' : '扣除'}积分成功`);
+                    }
+                } else {
+                    // 服务器API模式
+                    const response = await fetch(`${API_BASE}/students/${userId}/points`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ points: delta, reason })
+                    });
+                    
+                    if (response.ok) {
+                        // 重新加载数据
+                        const students = await loadStudents();
+                        const operations = await loadOperations();
+                        safeDynamicIslandCall('success', `${type === 'add' ? '增加' : '扣除'}积分成功`);
+                    } else {
+                        const error = await response.json();
+                        safeDynamicIslandCall('error', error.error || '操作失败');
+                    }
+                }
+            } catch (error) {
+                console.error('操作失败:', error);
+                safeDynamicIslandCall('error', '操作失败');
+            }
+        }
+
+        // 批量操作
+        async function performBatchOperation() {
+            const type = document.getElementById('batchOperationType').value;
+            const points = parseFloat(document.getElementById('batchPointsInput').value);
+            const reason = document.getElementById('batchReasonInput').value.trim();
+            
+            if (isNaN(points) || !reason) {
+                safeDynamicIslandCall('warning', '请填写完整信息');
+                return;
+            }
+            
+            const delta = type === 'add' ? points : -points;
+            
+            try {
+                if (isLocalFile) {
+                    // 本地存储模式
+                    const students = JSON.parse(localStorage.getItem(STORAGE_KEYS.students) || '[]');
+                    students.forEach(student => {
+                        student.points += delta;
+                        student.lastUpdated = new Date().toISOString();
+                    });
+                    
+                    // 记录操作
+                    const operations = JSON.parse(localStorage.getItem(STORAGE_KEYS.operations) || '[]');
+                    operations.push({
+                        time: new Date().toLocaleString(),
+                        user: '全部',
+                        type: delta > 0 ? '增加' : '扣除',
+                        points: delta * students.length,
+                        reason: `批量操作: ${reason}`
+                    });
+                    localStorage.setItem(STORAGE_KEYS.students, JSON.stringify(students));
+                    localStorage.setItem(STORAGE_KEYS.operations, JSON.stringify(operations));
+                    
+                    // 重新加载数据
+                    await loadStudents();
+                    await loadOperations();
+                    safeDynamicIslandCall('success', `批量${type === 'add' ? '增加' : '扣除'}积分完成`);
+                } else {
+                    // 服务器API模式
+                    const response = await fetch(`${API_BASE}/students/batch/points`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ points: delta, reason })
+                    });
+                    
+                    if (response.ok) {
+                        // 重新加载数据
+                        const students = await loadStudents();
+                        const operations = await loadOperations();
+                        safeDynamicIslandCall('success', `批量${type === 'add' ? '增加' : '扣除'}积分完成`);
+                    } else {
+                        const error = await response.json();
+                        safeDynamicIslandCall('error', error.error || '批量操作失败');
+                    }
+                }
+            } catch (error) {
+                console.error('批量操作失败:', error);
+                safeDynamicIslandCall('error', '批量操作失败');
+            }
+        }
+
+        // 更新排行榜
+        function updateLeaderboard(students) {
+            const sorted = [...students].sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
+            const tbody = document.getElementById('leaderboardBody');
+            tbody.innerHTML = sorted.map((s, i) => `
+                <tr class="fade-in-element" style="animation-delay: ${i * 0.05}s;">
+                    <td>${i + 1}</td>
+                    <td>${s.username}</td>
+                    <td class="${s.points >= 0 ? 'points-positive' : 'points-negative'}">${parseFloat(s.points).toFixed(1)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // 渲染操作历史
+        function renderOperations(operations) {
+            const tbody = document.getElementById('operationHistoryBody');
+            tbody.innerHTML = operations.map((op, index) => `
+                <tr class="fade-in-element" style="animation-delay: ${index * 0.03}s;">
+                    <td>${op.time}</td>
+                    <td>${op.user}</td>
+                    <td>${op.type}</td>
+                    <td class="${op.points > 0 ? 'points-positive' : 'points-negative'}">${op.points > 0 ? '+' : ''}${op.points}</td>
+                    <td>${op.reason}</td>
+                </tr>
+            `).join('');
+        }
+
+        // 重置积分
+        async function resetPoints() {
+            if (confirm('确定要重置所有积分吗？')) {
+                try {
+                    if (isLocalFile) {
+                        // 本地存储模式
+                        let students = JSON.parse(localStorage.getItem(STORAGE_KEYS.students) || '[]');
+                        students.forEach(student => {
+                            student.points = 0;
+                        });
+                        localStorage.setItem(STORAGE_KEYS.students, JSON.stringify(students));
+                        // 重新加载数据
+                        await loadStudents();
+                        await loadOperations();
+                        safeDynamicIslandCall('warning', '所有积分已重置');
+                    } else {
+                        // 服务器API模式
+                        const response = await fetch(`${API_BASE}/students/reset`, {
+                            method: 'POST'
+                        });
+                        
+                        if (response.ok) {
+                            // 重新加载数据
+                            const students = await loadStudents();
+                            const operations = await loadOperations();
+                            safeDynamicIslandCall('warning', '所有积分已重置');
+                        } else {
+                            safeDynamicIslandCall('error', '重置积分失败');
+                        }
+                    }
+                } catch (error) {
+                    console.error('重置积分失败:', error);
+                    safeDynamicIslandCall('error', '重置积分失败');
+                }
+            }
+        }
+
+        // 导出日志为TXT
+        async function exportLogToTxt() {
+            try {
+                // 获取操作记录
+                let operations = [];
+                if (isLocalFile) {
+                    operations = JSON.parse(localStorage.getItem(STORAGE_KEYS.operations) || '[]');
+                } else {
+                    const response = await fetch(`${API_BASE}/operations`);
+                    operations = await response.json();
+                }
+                
+                if (operations.length === 0) {
+                    safeDynamicIslandCall('warning', '没有操作记录可导出');
+                    return;
+                }
+                
+                // 生成TXT内容
+                let content = '积分管理系统操作日志\n';
+                content += '导出时间: ' + new Date().toLocaleString() + '\n';
+                content += '====================================\n\n';
+                
+                operations.forEach(op => {
+                    content += `时间: ${op.time}\n`;
+                    content += `用户: ${op.user}\n`;
+                    content += `操作: ${op.type}\n`;
+                    content += `积分: ${op.points}\n`;
+                    content += `原因: ${op.reason}\n`;
+                    content += '------------------------------------\n';
+                });
+                
+                // 创建并下载文件
+                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `积分操作日志_${new Date().toISOString().slice(0, 10)}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                safeDynamicIslandCall('success', '日志导出成功');
+            } catch (error) {
+                console.error('导出日志失败:', error);
+                safeDynamicIslandCall('error', '导出日志失败');
+            }
+        }
+
+        // 导入历史记录
+        async function importHistory() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                safeDynamicIslandCall('warning', '请选择要导入的文件');
+                return;
+            }
+            
+            // 检查文件类型
+            if (file.type !== 'text/plain') {
+                safeDynamicIslandCall('error', '请选择TXT文件');
+                return;
+            }
+            
+            // 读取文件
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const content = e.target.result;
+                    // 简单解析TXT内容（这里只是示例，实际应用中可能需要更复杂的解析）
+                    if (content.includes('积分管理系统操作日志')) {
+                        safeDynamicIslandCall('info', '历史记录导入功能已触发，但在当前版本中仅支持查看导入的文件内容。');
+                    } else {
+                        safeDynamicIslandCall('error', '文件格式不正确，请选择正确的积分操作日志文件');
+                    }
+                } catch (error) {
+                    console.error('导入历史记录失败:', error);
+                    safeDynamicIslandCall('error', '导入历史记录失败');
+                }
+            };
+            
+            reader.onerror = function() {
+                safeDynamicIslandCall('error', '读取文件失败');
+            };
+            
+            reader.readAsText(file);
+        }
+
+        // 搜索操作记录
+        function searchOperations() {
+            const searchTerm = document.getElementById('searchLogInput').value.toLowerCase();
+            const operations = JSON.parse(localStorage.getItem(STORAGE_KEYS.operations) || '[]');
+            
+            // 如果搜索词为空，显示所有记录
+            if (!searchTerm) {
+                renderOperations(operations);
+                return;
+            }
+            
+            // 过滤记录
+            const filtered = operations.filter(op => 
+                op.user.toLowerCase().includes(searchTerm) ||
+                op.type.toLowerCase().includes(searchTerm) ||
+                op.reason.toLowerCase().includes(searchTerm) ||
+                op.points.toString().includes(searchTerm)
+            );
+            
+            renderOperations(filtered);
+        }
+        
+        // 更新当前时间显示
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('zh-CN', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            const dateString = now.toLocaleDateString('zh-CN', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                weekday: 'short'
+            });
+            
+            // 检查元素是否存在后再更新
+            const timeElement = document.getElementById('currentTime');
+            if (timeElement) {
+                timeElement.innerHTML = `${dateString}<br>${timeString}`;
+            }
+            
+            // 更新灵动岛时间显示
+            if (typeof dynamicIsland !== 'undefined' && dynamicIsland) {
+                dynamicIsland.updateTime();
+            }
+        }
+    </script>
+    
+    <!-- 引入Dynamic Island和页面切换动画脚本 -->
+    <script src="js/dynamic-island.js" defer></script>
+    
+    
+    <!-- 引入认证管理器 -->
+    <script src="js/auth.js" defer></script>
+    <!-- 引入LuminaUI JavaScript -->
+    <script src="LuminaUI/js/lumina.js" defer></script>
+    <script>
+        // 页面加载完成后初始化LuminaUI
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化LuminaUI组件（如果存在相应的初始化函数）
+            if (typeof initButtons !== 'undefined') {
+                initButtons();
+            }
+            
+            // 页面访问控制
+            protectPage();
+        });
+    </script>
+</body>
+</html>

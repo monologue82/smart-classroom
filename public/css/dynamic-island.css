@@ -1,0 +1,485 @@
+/* Dynamic Island 样式 */
+
+#dynamic-island {
+    position: fixed;
+    top: 75px; /* 调整位置以避免遮挡导航栏 */
+    left: 50%;
+    transform: translateX(-50%);
+    
+    /* 默认背景，使用灰色调 */
+    background: rgba(128, 128, 128, 0.2);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(128, 128, 128, 0.4); /* 灰色边框 */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2); /* 添加内部高光 */
+    border-radius: 25px;
+    
+    color: rgba(255, 255, 255, 0.898); /* 使用您提供的文字颜色 */
+    height: 36px; /* 初始高度 */
+    min-width: 120px; /* 初始宽度 */
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    z-index: 10000; /* 确保在最顶层 */
+    cursor: pointer; /* 提示可点击 */
+    overflow: hidden; /* 防止内容溢出 */
+
+    /* 优化贝塞尔曲线：模拟 iOS 的弹性动画 */
+    --island-bezier: cubic-bezier(0.34, 1.56, 0.64, 1.0);
+    --content-fade-bezier: ease-out; /* 内容淡入淡出曲线 */
+
+    /* 流光效果相关变量 */
+    --glow-width: 2px;
+    --glow-color: rgba(108, 99, 255, 0.8); /* 默认流光颜色 */
+
+    /* 优化：区分不同属性的过渡时间和延迟 */
+    transition:
+        width 0.45s var(--island-bezier),     
+        min-width 0.45s var(--island-bezier), 
+        height 0.45s var(--island-bezier),    
+        padding 0.45s var(--island-bezier),   
+        border-radius 0.45s var(--island-bezier), 
+        background-color 0.45s var(--island-bezier), 
+        backdrop-filter 0.45s var(--island-bezier); 
+
+    will-change: width, height, padding, border-radius, transform, background-color, backdrop-filter, opacity;
+}
+
+/* 边缘流光效果 - 仅在有通知时显示 */
+#dynamic-island::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 25px;
+    padding: var(--glow-width);
+    background: linear-gradient(90deg, transparent, var(--glow-color), transparent);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    animation: glowMove 2s linear infinite;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* 流光动画 */
+@keyframes glowMove {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* 高光效果 */
+.island-highlight {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%; /* 高光宽度 */
+    height: 5px; /* 高光高度 */
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%);
+    border-radius: 5px / 2.5px; /* 椭圆形高光 */
+    filter: blur(2px); /* 使高光更柔和 */
+    opacity: 0.7;
+    z-index: 10; /* 确保在高光层上 */
+    transition: all 0.45s var(--island-bezier); /* 让高光也随灵动岛形状变化 */
+}
+
+/* 岛内内容容器 */
+.island-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    opacity: 0; 
+    pointer-events: none; 
+    transition: opacity 0.2s var(--content-fade-bezier); 
+    z-index: 20; /* 确保内容在高光之上 */
+}
+
+/* 内容显示时的样式 */
+#dynamic-island.display-content .island-content {
+    opacity: 1;
+    pointer-events: auto; 
+    transition-delay: 0.15s; /* 内容在岛开始扩张后 150ms 才开始淡入 */
+    transition-duration: 0.3s; /* 稍微增加内容淡入时间 */
+}
+
+#dynamic-island:not(.display-content) .island-content {
+    transition-delay: 0s; 
+    transition-duration: 0.1s; 
+}
+
+/* --- 不同状态的样式设计 --- */
+
+/* 问候状态 */
+#dynamic-island.greeting {
+    height: 50px;
+    min-width: 200px;
+    max-width: 90vw;
+    border-radius: 25px;
+    -webkit-border-radius: 25px;
+    background: rgba(108, 99, 255, 0.25); /* 紫色系毛玻璃效果 */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(108, 99, 255, 0.4); /* 紫色边框 */
+    box-shadow: 0 8px 32px rgba(108, 99, 255, 0.15), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2); /* 添加内部高光 */
+    padding: 0 20px;
+    --glow-color: rgba(108, 99, 255, 0.8); /* 紫色流光 */
+}
+
+#dynamic-island.greeting .island-highlight {
+    width: 85%;
+    top: 3px;
+    height: 6px;
+    opacity: 0.75;
+}
+
+#dynamic-island.greeting .fas {
+    font-size: 20px;
+    color: white; /* 使用白色图标以确保在灰色背景下可见 */
+    margin-right: 10px;
+}
+
+#dynamic-island.greeting .text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+#dynamic-island.greeting .message {
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: white; /* 使用白色文字以确保在灰色背景下可见 */
+}
+
+/* 信息提示状态 */
+#dynamic-island.info {
+    height: 50px;
+    min-width: 200px;
+    max-width: 90vw;
+    border-radius: 25px;
+    -webkit-border-radius: 25px;
+    background: rgba(52, 152, 219, 0.25); /* 蓝色系毛玻璃效果 */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(52, 152, 219, 0.4); /* 蓝色边框 */
+    box-shadow: 0 8px 32px rgba(52, 152, 219, 0.15), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2); /* 添加内部高光 */
+    padding: 0 20px;
+    --glow-color: rgba(52, 152, 219, 0.8); /* 蓝色流光 */
+}
+
+#dynamic-island.info .island-highlight {
+    width: 85%;
+    top: 3px;
+    height: 6px;
+    opacity: 0.75;
+}
+
+#dynamic-island.info .fas {
+    font-size: 20px;
+    color: white; /* 使用白色图标以确保在灰色背景下可见 */
+    margin-right: 10px;
+}
+
+#dynamic-island.info .text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+#dynamic-island.info .message {
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: white; /* 使用白色文字以确保在灰色背景下可见 */
+}
+
+/* 成功状态 */
+#dynamic-island.success {
+    height: 50px;
+    min-width: 200px;
+    max-width: 90vw;
+    border-radius: 25px;
+    -webkit-border-radius: 25px;
+    background: rgba(46, 204, 113, 0.25); /* 绿色系毛玻璃效果 */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(46, 204, 113, 0.4); /* 绿色边框 */
+    box-shadow: 0 8px 32px rgba(46, 204, 113, 0.15), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2); /* 添加内部高光 */
+    padding: 0 20px;
+    --glow-color: rgba(46, 204, 113, 0.8); /* 绿色流光 */
+}
+
+#dynamic-island.success .island-highlight {
+    width: 85%;
+    top: 3px;
+    height: 6px;
+    opacity: 0.75;
+}
+
+#dynamic-island.success .fas {
+    font-size: 20px;
+    color: white; /* 使用白色图标以确保在灰色背景下可见 */
+    margin-right: 10px;
+}
+
+#dynamic-island.success .text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+#dynamic-island.success .message {
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: white; /* 使用白色文字以确保在灰色背景下可见 */
+}
+
+/* 警告状态 */
+#dynamic-island.warning {
+    height: 50px;
+    min-width: 200px;
+    max-width: 90vw;
+    border-radius: 25px;
+    -webkit-border-radius: 25px;
+    background: rgba(241, 196, 15, 0.25); /* 黄色系毛玻璃效果 */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(241, 196, 15, 0.4); /* 黄色边框 */
+    box-shadow: 0 8px 32px rgba(241, 196, 15, 0.15), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2); /* 添加内部高光 */
+    padding: 0 20px;
+    --glow-color: rgba(241, 196, 15, 0.8); /* 黄色流光 */
+}
+
+#dynamic-island.warning .island-highlight {
+    width: 85%;
+    top: 3px;
+    height: 6px;
+    opacity: 0.75;
+}
+
+#dynamic-island.warning .fas {
+    font-size: 20px;
+    color: white; /* 使用白色图标以确保在灰色背景下可见 */
+    margin-right: 10px;
+}
+
+#dynamic-island.warning .text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+#dynamic-island.warning .message {
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: white; /* 使用白色文字以确保在灰色背景下可见 */
+}
+
+/* 错误状态 */
+#dynamic-island.error {
+    height: 50px;
+    min-width: 200px;
+    max-width: 90vw;
+    border-radius: 25px;
+    -webkit-border-radius: 25px;
+    background: rgba(231, 76, 60, 0.25); /* 红色系毛玻璃效果 */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(231, 76, 60, 0.4); /* 红色边框 */
+    box-shadow: 0 8px 32px rgba(231, 76, 60, 0.15), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2); /* 添加内部高光 */
+    padding: 0 20px;
+    --glow-color: rgba(231, 76, 60, 0.8); /* 红色流光 */
+}
+
+#dynamic-island.error .island-highlight {
+    width: 85%;
+    top: 3px;
+    height: 6px;
+    opacity: 0.75;
+}
+
+#dynamic-island.error .fas {
+    font-size: 20px;
+    color: white; /* 使用白色图标以确保在灰色背景下可见 */
+    margin-right: 10px;
+}
+
+#dynamic-island.error .text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+#dynamic-island.error .message {
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: white; /* 使用白色文字以确保在灰色背景下可见 */
+}
+
+/* 音乐播放状态（收起） */
+#dynamic-island.music-playing {
+    height: 65px;
+    min-width: 250px;
+    max-width: 90vw;
+    border-radius: 25px;
+    -webkit-border-radius: 25px;
+    background: rgba(155, 89, 182, 0.25); /* 紫色系毛玻璃效果 */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(155, 89, 182, 0.4); /* 紫色边框 */
+    box-shadow: 0 8px 32px rgba(155, 89, 182, 0.15), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2); /* 添加内部高光 */
+    padding: 0 15px;
+    --glow-color: rgba(155, 89, 182, 0.8); /* 紫色流光 */
+    transition:
+        width 0.45s var(--island-bezier),     
+        min-width 0.45s var(--island-bezier), 
+        height 0.45s var(--island-bezier),    
+        padding 0.45s var(--island-bezier),   
+        border-radius 0.45s var(--island-bezier), 
+        background-color 0.45s var(--island-bezier), 
+        backdrop-filter 0.45s var(--island-bezier); 
+}
+
+#dynamic-island.music-playing .island-highlight {
+    width: 85%;
+    top: 3px;
+    height: 6px;
+    opacity: 0.75;
+    transition: all 0.45s var(--island-bezier);
+}
+
+#dynamic-island.music-playing .album-art {
+    width: 45px;
+    height: 45px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+}
+
+#dynamic-island.music-playing .album-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#dynamic-island.music-playing .player-control-btn {
+    font-size: 20px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: white; /* 使用白色图标以确保在灰色背景下可见 */
+    padding: 0 5px;
+    transition: transform 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.2s ease, color 0.2s ease;
+}
+
+#dynamic-island.music-playing .player-control-btn:active {
+    transform: scale(0.85);
+    opacity: 0.7;
+    transition: transform 0.1s ease-out, opacity 0.1s ease;
+}
+
+/* 音乐播放状态（展开） */
+#dynamic-island.music-expanded {
+    height: 90px; 
+    min-width: 320px;
+    border-radius: 25px;
+    -webkit-border-radius: 25px;
+    background: rgba(155, 89, 182, 0.25); /* 紫色系毛玻璃效果 */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(155, 89, 182, 0.4); /* 紫色边框 */
+    box-shadow: 0 8px 32px rgba(155, 89, 182, 0.15), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2); /* 添加内部高光 */
+    padding: 0 20px;
+    flex-direction: column; 
+    justify-content: center;
+    --glow-color: rgba(155, 89, 182, 0.8); /* 紫色流光 */
+    transition:
+        width 0.45s var(--island-bezier),     
+        min-width 0.45s var(--island-bezier), 
+        height 0.45s var(--island-bezier),    
+        padding 0.45s var(--island-bezier),   
+        border-radius 0.45s var(--island-bezier), 
+        background-color 0.45s var(--island-bezier), 
+        backdrop-filter 0.45s var(--island-bezier); 
+}
+
+#dynamic-island.music-expanded .island-highlight {
+    width: 95%;
+    top: 5px;
+    height: 8px;
+    opacity: 0.9;
+    transition: all 0.45s var(--island-bezier);
+}
+
+#dynamic-island.music-expanded .island-content {
+    flex-direction: column; 
+    gap: 8px; 
+    transition: all 0.3s ease;
+}
+
+#dynamic-island.music-expanded .music-info-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+#dynamic-island.music-expanded .player-controls {
+    width: 100%;
+    justify-content: space-around; 
+    margin-top: 5px; 
+    gap: 0; 
+    transition: all 0.3s ease;
+}
+
+#dynamic-island.music-expanded .player-control-btn {
+    font-size: 24px; 
+    color: white; /* 使用白色图标以确保在灰色背景下可见 */
+    transition: transform 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.2s ease, color 0.2s ease;
+}
+
+#dynamic-island.music-expanded .player-control-btn:active {
+    transform: scale(0.85);
+    opacity: 0.7;
+    transition: transform 0.1s ease-out, opacity 0.1s ease;
+}
+

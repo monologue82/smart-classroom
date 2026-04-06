@@ -4,28 +4,51 @@
 
 ---
 
-## [English](README.md)
+## 目录
+
+- [English](README.md)
+- [特性](#特性)
+- [技术栈](#技术栈)
+- [目录结构](#目录结构)
+- [快速开始](#快速开始)
+- [功能模块](#功能模块)
+- [配置说明](#配置说明)
+- [开发指南](#开发指南)
+- [部署](#部署)
+- [Star History](#star-history)
+- [贡献指南](#贡献指南)
+- [许可证](#许可证)
+- [联系方式](#联系方式)
+- [致谢](#致谢)
 
 ---
 
 ## 特性
 
-- 积分管理：学生积分统计、排行榜、加分/扣分操作
-- 作业管理：作业布置、上交情况追踪
-- 卫生管理：值日安排、清洁状态管理
-- 随机抽号：课堂随机提问功能
-- 规则管理：班级规则自定义
-- 数据大屏：实时数据可视化展示
-- 系统监控：服务器状态监控
-- 数据备份：自动备份与恢复
+| 模块 | 描述 |
+|------|------|
+| 积分管理 | 学生积分统计、排行榜、加分/扣分操作 |
+| 作业管理 | 作业布置、上交情况追踪 |
+| 卫生管理 | 值日安排、清洁状态管理 |
+| 随机抽号 | 课堂随机提问功能 |
+| 规则管理 | 班级规则自定义 |
+| 数据大屏 | 实时数据可视化展示 |
+| 系统监控 | 服务器状态监控 |
+| 数据备份 | 自动备份与恢复 |
+
+---
 
 ## 技术栈
 
-- 后端：Node.js + Express + HTTP/2
-- 前端：原生 JavaScript + CSS3
-- UI框架：LuminaUI
-- 数据存储：LocalStorage + JSON文件
-- 构建工具：Webpack
+| 类别 | 技术 |
+|------|------|
+| 后端 | Node.js + Express + HTTP/2 |
+| 前端 | 原生 JavaScript + CSS3 |
+| UI框架 | LuminaUI |
+| 数据存储 | LocalStorage + JSON文件 |
+| 构建工具 | Webpack |
+
+---
 
 ## 目录结构
 
@@ -50,6 +73,8 @@ smart-classroom5.1/
 └── README-CN.md           # 项目说明（中文）
 ```
 
+---
+
 ## 快速开始
 
 ### 前置要求
@@ -61,7 +86,7 @@ smart-classroom5.1/
 
 ```bash
 # 克隆项目
-git clone <repository-url>
+git clone https://github.com/monologue82/smart-classroom.git
 cd smart-classroom5.1
 
 # 安装依赖
@@ -85,6 +110,8 @@ npm run start:http2-ssl
 ### 访问
 
 打开浏览器访问：`http://localhost:3000`
+
+---
 
 ## 功能模块
 
@@ -131,6 +158,8 @@ npm run start:http2-ssl
 - 统计图表
 - 关键指标监控
 
+---
+
 ## 配置说明
 
 ### 端口配置
@@ -147,6 +176,8 @@ npm run generate-ssl
 ### 环境变量
 
 - `USE_SSL=true`：启用HTTPS
+
+---
 
 ## 开发指南
 
@@ -169,6 +200,8 @@ npm run generate-ssl
 - 遵循模块化开发
 - 保持代码清晰简洁
 
+---
+
 ## 部署
 
 ### 生产环境部署
@@ -188,6 +221,14 @@ npm install -g pm2
 pm2 start src/server-http2.js --name smart-classroom
 ```
 
+---
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=monologue82/smart-classroom&type=Date)](https://star-history.com/#monologue82/smart-classroom&Date)
+
+---
+
 ## 贡献指南
 
 欢迎贡献代码！请遵循以下步骤：
@@ -198,16 +239,22 @@ pm2 start src/server-http2.js --name smart-classroom
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 开启Pull Request
 
+---
+
 ## 许可证
 
 本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
 
+---
+
 ## 联系方式
 
-- 项目主页：[GitHub Repository]
-- 问题反馈：[Issues]
-- 邮箱：[2627641908@QQ.com]
+- 项目主页：[GitHub Repository](https://github.com/monologue82/smart-classroom)
+- 问题反馈：[Issues](https://github.com/monologue82/smart-classroom/issues)
+- 邮箱：[2627641908@QQ.com](mailto:2627641908@QQ.com)
 - B站：[骄傲的狼W0R](https://space.bilibili.com/1741551557)
+
+---
 
 ## 致谢
 

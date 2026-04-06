@@ -4,28 +4,51 @@ A modern and feature-rich classroom management system, providing student score m
 
 ---
 
-## [中文说明](#chinese)
+## Table of Contents
+
+- [中文说明](#chinese)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Directory Structure](#directory-structure)
+- [Quick Start](#quick-start)
+- [Feature Modules](#feature-modules)
+- [Configuration](#configuration)
+- [Development Guide](#development-guide)
+- [Deployment](#deployment)
+- [Star History](#star-history)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+- [Acknowledgments](#acknowledgments)
 
 ---
 
 ## Features
 
-- Score Management: Student score statistics, leaderboard, score addition/deduction operations
-- Homework Management: Homework assignment, submission status tracking
-- Hygiene Management: Duty schedule, cleaning status management
-- Random Number: Classroom random questioning function
-- Rule Management: Custom classroom rules
-- Data Dashboard: Real-time data visualization display
-- System Monitoring: Server status monitoring
-- Data Backup: Automatic backup and recovery
+| Module | Description |
+|--------|-------------|
+| Score Management | Student score statistics, leaderboard, score addition/deduction operations |
+| Homework Management | Homework assignment, submission status tracking |
+| Hygiene Management | Duty schedule, cleaning status management |
+| Random Number | Classroom random questioning function |
+| Rule Management | Custom classroom rules |
+| Data Dashboard | Real-time data visualization display |
+| System Monitoring | Server status monitoring |
+| Data Backup | Automatic backup and recovery |
+
+---
 
 ## Tech Stack
 
-- Backend: Node.js + Express + HTTP/2
-- Frontend: Native JavaScript + CSS3
-- UI Framework: LuminaUI
-- Data Storage: LocalStorage + JSON files
-- Build Tool: Webpack
+| Category | Technologies |
+|----------|--------------|
+| Backend | Node.js + Express + HTTP/2 |
+| Frontend | Native JavaScript + CSS3 |
+| UI Framework | LuminaUI |
+| Data Storage | LocalStorage + JSON files |
+| Build Tool | Webpack |
+
+---
 
 ## Directory Structure
 
@@ -50,6 +73,8 @@ smart-classroom5.1/
 └── README.md              # Project description
 ```
 
+---
+
 ## Quick Start
 
 ### Prerequisites
@@ -61,7 +86,7 @@ smart-classroom5.1/
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/monologue82/smart-classroom.git
 cd smart-classroom5.1
 
 # Install dependencies
@@ -85,6 +110,8 @@ npm run start:http2-ssl
 ### Access
 
 Open your browser and visit: `http://localhost:3000`
+
+---
 
 ## Feature Modules
 
@@ -131,6 +158,8 @@ Open your browser and visit: `http://localhost:3000`
 - Statistical charts
 - Key indicator monitoring
 
+---
+
 ## Configuration
 
 ### Port Configuration
@@ -147,6 +176,8 @@ npm run generate-ssl
 ### Environment Variables
 
 - `USE_SSL=true`: Enable HTTPS
+
+---
 
 ## Development Guide
 
@@ -169,6 +200,8 @@ npm run generate-ssl
 - Follow modular development
 - Keep code clear and concise
 
+---
+
 ## Deployment
 
 ### Production Environment Deployment
@@ -188,6 +221,14 @@ npm install -g pm2
 pm2 start src/server-http2.js --name smart-classroom
 ```
 
+---
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=monologue82/smart-classroom&type=Date)](https://star-history.com/#monologue82/smart-classroom&Date)
+
+---
+
 ## Contributing
 
 Welcome to contribute! Please follow these steps:
@@ -198,16 +239,22 @@ Welcome to contribute! Please follow these steps:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+---
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
+---
+
 ## Contact
 
-- Project Homepage: [GitHub Repository]
-- Issue Tracker: [Issues]
-- Email: [2627641908@QQ.com]
+- Project Homepage: [GitHub Repository](https://github.com/monologue82/smart-classroom)
+- Issue Tracker: [Issues](https://github.com/monologue82/smart-classroom/issues)
+- Email: [2627641908@QQ.com](mailto:2627641908@QQ.com)
 - Bilibili: [骄傲的狼W0R](https://space.bilibili.com/1741551557)
+
+---
 
 ## Acknowledgments
 
@@ -219,34 +266,59 @@ Thanks to all developers who have contributed to this project!
 
 ---
 
+---
+
 # <a name="chinese"></a>智能教室管理系统
 
 一个现代化的、功能丰富的班级管理系统，提供学生积分管理、作业管理、卫生管理、随机抽号等功能。
 
 ---
 
-## [English](#smart-classroom-management-system)
+## 目录
+
+- [English](#smart-classroom-management-system)
+- [特性](#特性)
+- [技术栈](#技术栈)
+- [目录结构](#目录结构)
+- [快速开始](#快速开始)
+- [功能模块](#功能模块)
+- [配置说明](#配置说明)
+- [开发指南](#开发指南)
+- [部署](#部署)
+- [Star History](#star-history-1)
+- [贡献指南](#贡献指南)
+- [许可证](#许可证)
+- [联系方式](#联系方式)
+- [致谢](#致谢)
 
 ---
 
 ## 特性
 
-- 积分管理：学生积分统计、排行榜、加分/扣分操作
-- 作业管理：作业布置、上交情况追踪
-- 卫生管理：值日安排、清洁状态管理
-- 随机抽号：课堂随机提问功能
-- 规则管理：班级规则自定义
-- 数据大屏：实时数据可视化展示
-- 系统监控：服务器状态监控
-- 数据备份：自动备份与恢复
+| 模块 | 描述 |
+|------|------|
+| 积分管理 | 学生积分统计、排行榜、加分/扣分操作 |
+| 作业管理 | 作业布置、上交情况追踪 |
+| 卫生管理 | 值日安排、清洁状态管理 |
+| 随机抽号 | 课堂随机提问功能 |
+| 规则管理 | 班级规则自定义 |
+| 数据大屏 | 实时数据可视化展示 |
+| 系统监控 | 服务器状态监控 |
+| 数据备份 | 自动备份与恢复 |
+
+---
 
 ## 技术栈
 
-- 后端：Node.js + Express + HTTP/2
-- 前端：原生 JavaScript + CSS3
-- UI框架：LuminaUI
-- 数据存储：LocalStorage + JSON文件
-- 构建工具：Webpack
+| 类别 | 技术 |
+|------|------|
+| 后端 | Node.js + Express + HTTP/2 |
+| 前端 | 原生 JavaScript + CSS3 |
+| UI框架 | LuminaUI |
+| 数据存储 | LocalStorage + JSON文件 |
+| 构建工具 | Webpack |
+
+---
 
 ## 目录结构
 
@@ -271,6 +343,8 @@ smart-classroom5.1/
 └── README.md              # 项目说明
 ```
 
+---
+
 ## 快速开始
 
 ### 前置要求
@@ -282,7 +356,7 @@ smart-classroom5.1/
 
 ```bash
 # 克隆项目
-git clone <repository-url>
+git clone https://github.com/monologue82/smart-classroom.git
 cd smart-classroom5.1
 
 # 安装依赖
@@ -306,6 +380,8 @@ npm run start:http2-ssl
 ### 访问
 
 打开浏览器访问：`http://localhost:3000`
+
+---
 
 ## 功能模块
 
@@ -352,6 +428,8 @@ npm run start:http2-ssl
 - 统计图表
 - 关键指标监控
 
+---
+
 ## 配置说明
 
 ### 端口配置
@@ -368,6 +446,8 @@ npm run generate-ssl
 ### 环境变量
 
 - `USE_SSL=true`：启用HTTPS
+
+---
 
 ## 开发指南
 
@@ -390,6 +470,8 @@ npm run generate-ssl
 - 遵循模块化开发
 - 保持代码清晰简洁
 
+---
+
 ## 部署
 
 ### 生产环境部署
@@ -409,6 +491,14 @@ npm install -g pm2
 pm2 start src/server-http2.js --name smart-classroom
 ```
 
+---
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=monologue82/smart-classroom&type=Date)](https://star-history.com/#monologue82/smart-classroom&Date)
+
+---
+
 ## 贡献指南
 
 欢迎贡献代码！请遵循以下步骤：
@@ -419,15 +509,22 @@ pm2 start src/server-http2.js --name smart-classroom
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 开启Pull Request
 
+---
+
 ## 许可证
 
 本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
 
+---
+
 ## 联系方式
 
-- 项目主页：[GitHub Repository]
-- 问题反馈：[Issues]
-- 邮箱：[your-email@example.com]
+- 项目主页：[GitHub Repository](https://github.com/monologue82/smart-classroom)
+- 问题反馈：[Issues](https://github.com/monologue82/smart-classroom/issues)
+- 邮箱：[2627641908@QQ.com](mailto:2627641908@QQ.com)
+- B站：[骄傲的狼W0R](https://space.bilibili.com/1741551557)
+
+---
 
 ## 致谢
 

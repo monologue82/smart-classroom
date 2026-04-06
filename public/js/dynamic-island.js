@@ -55,37 +55,68 @@ class DynamicIslandManager {
     this.setIdleState();
   }
 
-  // 创建Dynamic Island元素
-  createDynamicIsland() {
-    const islandHTML = `
-      <div id="dynamic-island">
-        <div class="island-content">
-          <!-- 内容由 JS 动态插入 -->
-        </div>
-        <div class="island-highlight"></div>
-      </div>
-    `;
-    
-    try {
-      // 将Dynamic Island添加到body
-      if (document.body) {
-        document.body.insertAdjacentHTML('afterbegin', islandHTML);
-      } else {
-        // 如果document.body不存在，等待DOM加载完成
-        document.addEventListener('DOMContentLoaded', () => {
-          document.body.insertAdjacentHTML('afterbegin', islandHTML);
-        });
-      }
-    } catch (error) {
-      console.error('创建Dynamic Island元素失败:', error);
-      return;
-    }
-    
-    // 重新获取元素引用
-    this.dynamicIsland = document.getElementById('dynamic-island');
-    if (this.dynamicIsland) {
-      this.islandContent = this.dynamicIsland.querySelector('.island-content');
-    }
+  // 创建Dynamic Island元素
+
+  createDynamicIsland() {
+
+    const islandHTML = `
+
+      <div id="dynamic-island">
+
+        <div class="island-content">
+
+          <!-- 内容由 JS 动态插入 -->
+
+        </div>
+
+        <div class="island-highlight"></div>
+
+      </div>
+
+    `;
+
+    
+
+    try {
+
+      // 将Dynamic Island添加到body
+
+      if (document.body) {
+
+        document.body.insertAdjacentHTML('afterbegin', islandHTML);
+
+      } else {
+
+        // 如果document.body不存在，等待DOM加载完成
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+          document.body.insertAdjacentHTML('afterbegin', islandHTML);
+
+        });
+
+      }
+
+    } catch (error) {
+
+      console.error('创建Dynamic Island元素失败:', error);
+
+      return;
+
+    }
+
+    
+
+    // 重新获取元素引用
+
+    this.dynamicIsland = document.getElementById('dynamic-island');
+
+    if (this.dynamicIsland) {
+
+      this.islandContent = this.dynamicIsland.querySelector('.island-content');
+
+    }
+
   }
 
   // 设置空闲状态（始终显示时间）
@@ -372,91 +403,176 @@ class DynamicIslandManager {
   }
 }
 
-// 延迟创建全局实例，确保DOM完全加载
-let dynamicIsland = null;
-
-// 检查dynamicIsland实例是否完整的方法
-function isValidDynamicIsland(instance) {
-  if (!instance) return false;
-  return typeof instance.show === 'function' &&
-         typeof instance.showInfo === 'function' &&
-         typeof instance.showSuccess === 'function' &&
-         typeof instance.showWarning === 'function' &&
-         typeof instance.showError === 'function' &&
-         typeof instance.updateTime === 'function';
-}
-
-// 初始化函数
-function initializeDynamicIsland() {
-  if (!dynamicIsland || !isValidDynamicIsland(dynamicIsland)) {
-    try {
-      // 创建新实例
-      const tempInstance = new DynamicIslandManager();
-      // 确保实例的所有方法都可用
-      if (isValidDynamicIsland(tempInstance)) {
-        dynamicIsland = tempInstance;
-      } else {
-        console.error('DynamicIsland实例初始化不完整，方法不可用');
-        // 创建一个模拟对象作为备用
-        dynamicIsland = createFallbackDynamicIsland();
-      }
-    } catch (error) {
-      console.error('DynamicIsland初始化错误:', error);
-      // 创建一个模拟对象作为备用
-      dynamicIsland = createFallbackDynamicIsland();
-    }
-  }
-  return dynamicIsland;
-}
-
-// 创建一个备用的dynamicIsland对象
-function createFallbackDynamicIsland() {
-  return {
-    show: function(type, message) {
-      this[type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info'](message);
-    },
-    showInfo: function(message) {
-      this.info(message);
-    },
-    showSuccess: function(message) {
-      this.success(message);
-    },
-    showWarning: function(message) {
-      this.warning(message);
-    },
-    showError: function(message) {
-      this.error(message);
-    },
-    info: function(message) { console.log('Info: ' + message); },
-    success: function(message) { console.log('Success: ' + message); },
-    warning: function(message) { console.log('Warning: ' + message); },
-    error: function(message) { console.log('Error: ' + message); },
-    updateTime: function() { console.log('Updating time...'); }
-  };
-}
-
-// 为了兼容旧的浏览器提示，提供替换函数
-function showAlert(message, type = 'info') {
-  try {
-    // 尝试初始化
-    const island = initializeDynamicIsland();
-    if (island && typeof island.show === 'function') {
-      island.show(type, message);
-    } else {
-      alert(message);
-    }
-  } catch (error) {
-    console.error('Dynamic Island调用失败:', error);
-    alert(message);
-  }
-}
-
-// 在DOM完全加载后初始化
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeDynamicIsland);
-} else {
-  // DOM已经加载完成，直接初始化
-  setTimeout(initializeDynamicIsland, 0);
+// 延迟创建全局实例，确保DOM完全加载
+
+let dynamicIsland = null;
+
+
+
+// 检查dynamicIsland实例是否完整的方法
+
+function isValidDynamicIsland(instance) {
+
+  if (!instance) return false;
+
+  return typeof instance.show === 'function' &&
+
+         typeof instance.showInfo === 'function' &&
+
+         typeof instance.showSuccess === 'function' &&
+
+         typeof instance.showWarning === 'function' &&
+
+         typeof instance.showError === 'function' &&
+
+         typeof instance.updateTime === 'function';
+
+}
+
+
+
+// 初始化函数
+
+function initializeDynamicIsland() {
+
+  if (!dynamicIsland || !isValidDynamicIsland(dynamicIsland)) {
+
+    try {
+
+      // 创建新实例
+
+      const tempInstance = new DynamicIslandManager();
+
+      // 确保实例的所有方法都可用
+
+      if (isValidDynamicIsland(tempInstance)) {
+
+        dynamicIsland = tempInstance;
+
+      } else {
+
+        console.error('DynamicIsland实例初始化不完整，方法不可用');
+
+        // 创建一个模拟对象作为备用
+
+        dynamicIsland = createFallbackDynamicIsland();
+
+      }
+
+    } catch (error) {
+
+      console.error('DynamicIsland初始化错误:', error);
+
+      // 创建一个模拟对象作为备用
+
+      dynamicIsland = createFallbackDynamicIsland();
+
+    }
+
+  }
+
+  return dynamicIsland;
+
+}
+
+
+
+// 创建一个备用的dynamicIsland对象
+
+function createFallbackDynamicIsland() {
+
+  return {
+
+    show: function(type, message) {
+
+      this[type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info'](message);
+
+    },
+
+    showInfo: function(message) {
+
+      this.info(message);
+
+    },
+
+    showSuccess: function(message) {
+
+      this.success(message);
+
+    },
+
+    showWarning: function(message) {
+
+      this.warning(message);
+
+    },
+
+    showError: function(message) {
+
+      this.error(message);
+
+    },
+
+    info: function(message) { console.log('Info: ' + message); },
+
+    success: function(message) { console.log('Success: ' + message); },
+
+    warning: function(message) { console.log('Warning: ' + message); },
+
+    error: function(message) { console.log('Error: ' + message); },
+
+    updateTime: function() { console.log('Updating time...'); }
+
+  };
+
+}
+
+
+
+// 为了兼容旧的浏览器提示，提供替换函数
+
+function showAlert(message, type = 'info') {
+
+  try {
+
+    // 尝试初始化
+
+    const island = initializeDynamicIsland();
+
+    if (island && typeof island.show === 'function') {
+
+      island.show(type, message);
+
+    } else {
+
+      alert(message);
+
+    }
+
+  } catch (error) {
+
+    console.error('Dynamic Island调用失败:', error);
+
+    alert(message);
+
+  }
+
+}
+
+
+
+// 在DOM完全加载后初始化
+
+if (document.readyState === 'loading') {
+
+  document.addEventListener('DOMContentLoaded', initializeDynamicIsland);
+
+} else {
+
+  // DOM已经加载完成，直接初始化
+
+  setTimeout(initializeDynamicIsland, 0);
+
 }
 
 // 导出供其他模块使用

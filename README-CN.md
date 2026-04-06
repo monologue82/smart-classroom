@@ -206,7 +206,8 @@ pm2 start src/server-http2.js --name smart-classroom
 
 - 项目主页：[GitHub Repository]
 - 问题反馈：[Issues]
-- 邮箱：[your-email@example.com]
+- 邮箱：[2627641908@QQ.com]
+- B站：[骄傲的狼W0R](https://space.bilibili.com/1741551557)
 
 ## 致谢
 

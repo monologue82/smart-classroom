@@ -207,6 +207,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Project Homepage: [GitHub Repository]
 - Issue Tracker: [Issues]
 - Email: [2627641908@QQ.com]
+- Bilibili: [骄傲的狼W0R](https://space.bilibili.com/1741551557)
 
 ## Acknowledgments
 

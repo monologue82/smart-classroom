@@ -206,7 +206,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Project Homepage: [GitHub Repository]
 - Issue Tracker: [Issues]
-- Email: [your-email@example.com]
+- Email: [2627641908@QQ.com]
 
 ## Acknowledgments
 

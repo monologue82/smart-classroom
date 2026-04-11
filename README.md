@@ -243,7 +243,7 @@ Welcome to contribute! Please follow these steps:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details
 
 ---
 
@@ -513,7 +513,7 @@ pm2 start src/server-http2.js --name smart-classroom
 
 ## 许可证
 
-本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
+本项目采用 Apache License 2.0 许可证 - 详见 [LICENSE](LICENSE) 文件
 
 ---
 
